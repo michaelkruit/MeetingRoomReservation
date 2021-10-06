@@ -4,5 +4,39 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<br />
+
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-2 mb-2 text-center">
+        <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+                <div class="card-header py-3">
+                    <h4 class="my-0 fw-normal">Login</h4>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title pricing-card-title">Login to your company to</h2>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>Manage your meeting rooms</li>
+                        <li>Reserve meeting rooms</li>
+                        <li>Check meeting room status</li>
+                    </ul>
+                    <a asp-action="register" asp-controller="account" type="button" class="w-100 btn btn-lg btn-outline-primary">Login</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+                <div class="card-header py-3">
+                    <h4 class="my-0 fw-normal">Register</h4>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title pricing-card-title">Register your company now</h2>
+                    <p>And take advantage now!</p>
+                    <a asp-action="register" asp-controller="account" type="button" class="w-100 btn btn-lg btn-outline-primary">Register</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
