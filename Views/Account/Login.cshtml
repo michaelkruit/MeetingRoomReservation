@@ -1,0 +1,22 @@
+﻿@model LoginViewModel
+
+    <div class="container">
+        <form asp-controller="account" asp-method="login" method="post">
+            <h1 class="h3 mb-3 fw-normal">Please log in</h1>
+
+            <div class="form-floating">
+                <input asp-for="CompanyName" class="form-control" placeholder="Company name">
+                <label for="floatingInput">Company name</label>
+                <br />
+                <span class="text-danger" asp-validation-for="CompanyName"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Password" type="password" class="form-control" placeholder="Password">
+                <label for="floatingPassword">Password</label>
+                <br />
+                <span class="text-danger" asp-validation-for="Password"></span>
+            </div>
+
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Log in</button>
+        </form>
+    </div>

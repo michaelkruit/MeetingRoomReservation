@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MeetingRooms.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +21,12 @@ namespace MeetingRooms.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(object loginModel) 
+        public IActionResult Login(LoginViewModel loginViewModel) 
         {
+            if (!ModelState.IsValid)
+            {
+                return View(loginViewModel);
+            }
             // TODO: Login user
 
             // After login is success, redirect user to dashboard
@@ -35,7 +40,7 @@ namespace MeetingRooms.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(object registerModel)
+        public IActionResult Register(RegisterViewModel registerViewModel)
         {
             // TODO: Register new user
 
