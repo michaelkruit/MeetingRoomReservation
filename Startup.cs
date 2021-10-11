@@ -1,14 +1,18 @@
 using MeetingRooms.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MeetingRooms
@@ -31,6 +35,15 @@ namespace MeetingRooms
             {
                 options.UseSqlite("Data Source=Data/Meetings.db");
             });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +59,16 @@ namespace MeetingRooms
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseSession();
+            app.Use(async (context, next) =>
+            {
+                var token = context.Session.GetString("Token");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Request.Headers.Add("Authorization", "Bearer " + token);
+                }
+                await next();
+            });
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

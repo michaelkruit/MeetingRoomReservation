@@ -1,11 +1,9 @@
 ﻿using MeetingRooms.Data;
 using MeetingRooms.Data.Entities;
 using MeetingRooms.Interfaces;
-using MeetingRooms.Models;
 using MeetingRooms.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,11 +14,13 @@ namespace MeetingRooms.Repositories
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly HMACSHA512 _hmac;
+        private readonly ITokenService _tokenService;
 
-        public AccountRepository(ApplicationDbContext applicationDbContext, HMACSHA512 hmac)
+        public AccountRepository(ApplicationDbContext applicationDbContext, HMACSHA512 hmac, ITokenService tokenService)
         {
             _applicationDbContext = applicationDbContext;
             _hmac = hmac;
+            _tokenService = tokenService;
         }
 
         public async Task<string> Login(LoginViewModel loginViewModel)
@@ -43,14 +43,7 @@ namespace MeetingRooms.Repositories
                 }
             }
 
-            var companyUser = new CompanyUserModel()
-            {
-                Id = company.Id,
-                Name = company.Name,
-                Token = string.Empty // TODO: Generate JWT
-            };
-
-            throw new NotImplementedException();
+            return _tokenService.BuildToken(company);
         }
 
         public async Task<string> Register(RegisterViewModel registerViewModel)
@@ -70,14 +63,7 @@ namespace MeetingRooms.Repositories
             await _applicationDbContext.AddAsync(company);
             await _applicationDbContext.SaveChangesAsync();
 
-            var companyUser = new CompanyUserModel()
-            {
-                Id = company.Id,
-                Name = company.Name,
-                Token = string.Empty // TODO: Generate JWT
-            };
-
-            throw new NotImplementedException();
+            return _tokenService.BuildToken(company);
         }
 
         private async Task<bool> CompanyExist(string companyName) =>
