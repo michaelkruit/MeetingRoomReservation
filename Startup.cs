@@ -1,4 +1,7 @@
 using MeetingRooms.Data;
+using MeetingRooms.Interfaces;
+using MeetingRooms.Repositories;
+using MeetingRooms.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +33,11 @@ namespace MeetingRooms
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
+
+            services.AddSession();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {

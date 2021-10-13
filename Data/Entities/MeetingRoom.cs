@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MeetingRooms.Data.Entities
 {
-    [Table("Meetings")]
+    [Table("MeetingRooms")]
     public class MeetingRoom
     {
         [Key]

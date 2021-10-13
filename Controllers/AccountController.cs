@@ -1,17 +1,18 @@
-﻿using MeetingRooms.ViewModels;
+﻿using MeetingRooms.Interfaces;
+using MeetingRooms.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MeetingRooms.Controllers
 {
     public class AccountController : Controller
     {
-        public AccountController()
-        {
+        private readonly IAccountRepository _accountRepository;
 
+        public AccountController(IAccountRepository accountRepository)
+        {
+            _accountRepository = accountRepository;
         }
 
         [HttpGet]
@@ -21,15 +22,16 @@ namespace MeetingRooms.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(LoginViewModel loginViewModel) 
+        public async Task<IActionResult> Login(LoginViewModel loginViewModel) 
         {
             if (!ModelState.IsValid)
             {
                 return View(loginViewModel);
             }
-            // TODO: Login user
+            var token = await _accountRepository.Login(loginViewModel);
 
-            // After login is success, redirect user to dashboard
+            HttpContext.Session.SetString("Token", token);
+
             return RedirectToAction();
         }
 
@@ -40,12 +42,10 @@ namespace MeetingRooms.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(RegisterViewModel registerViewModel)
+        public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
-            // TODO: Register new user
-
-            // After register is success, redirect user to dashboard
-            return RedirectToAction();
+            var succes = await _accountRepository.Register(registerViewModel);
+            return succes ? RedirectToAction(nameof(Login)) : View(registerViewModel);
         }
     }
 }

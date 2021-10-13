@@ -6,6 +6,7 @@ namespace MeetingRooms.Interfaces
     public interface IAccountRepository
     {
         Task<string> Login(LoginViewModel loginViewModel);
-        Task<string> Register(RegisterViewModel registerViewModel);
+        Task<bool> Register(RegisterViewModel registerViewModel);
+        void Logout(string token);
     }
 }
