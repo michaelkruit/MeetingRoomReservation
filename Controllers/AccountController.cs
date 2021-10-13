@@ -47,5 +47,18 @@ namespace MeetingRooms.Controllers
             var succes = await _accountRepository.Register(registerViewModel);
             return succes ? RedirectToAction(nameof(Login)) : View(registerViewModel);
         }
+
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            // Get token
+            var token = HttpContext.Session.GetString("Token");
+            // Remove user from cache
+            _accountRepository.Logout(token);
+            // Remove token from session
+            HttpContext.Session.Remove("Token");
+
+            return RedirectToAction(nameof(Login));
+        }
     }
 }
