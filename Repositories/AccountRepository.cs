@@ -2,6 +2,7 @@
 using MeetingRooms.Data.Entities;
 using MeetingRooms.Interfaces;
 using MeetingRooms.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace MeetingRooms.Repositories
 {
+    [AllowAnonymous]
     public class AccountRepository : IAccountRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
