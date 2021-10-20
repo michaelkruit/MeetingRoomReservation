@@ -50,10 +50,8 @@ namespace MeetingRooms.Repositories
             return meetingRooms;
         }
 
-        public Task<MeetingRoom> GetSingle(int id)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<MeetingRoom> GetSingle(int id)
+            => await _dbContext.MeetingRooms.SingleOrDefaultAsync(x => x.Id == id) ?? throw new Exception("Meeting room not found");
 
         public Task<MeetingRoom> Update(MeetingRoomUpdateViewModel updateModel)
         {
