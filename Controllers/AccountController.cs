@@ -32,7 +32,7 @@ namespace MeetingRooms.Controllers
 
             HttpContext.Session.SetString("Token", token);
 
-            return RedirectToAction();
+            return RedirectToAction("Index", "MeetingRoom");
         }
 
         [HttpGet]
