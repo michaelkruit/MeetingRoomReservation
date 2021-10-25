@@ -10,7 +10,7 @@ namespace MeetingRooms.Interfaces
         Task<IEnumerable<MeetingRoom>> GetList(string token);
         Task<MeetingRoom> GetSingle(int id);
         Task<MeetingRoom> Create(string token, MeetingRoomCreateViewModel createModel);
-        Task<MeetingRoom> Update(MeetingRoomUpdateViewModel updateModel);
+        Task<MeetingRoom> Update(string token, MeetingRoomUpdateViewModel updateModel);
         Task<bool> Delete(int id);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using MeetingRooms.Interfaces;
 using MeetingRooms.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -36,15 +35,7 @@ namespace MeetingRooms.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details(int id)
-        {
-            var meetingRoom = await _meetingRoomRepository.GetSingle(id);
-
-            return View(meetingRoom);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             return View();
         }
@@ -61,7 +52,29 @@ namespace MeetingRooms.Controllers
 
             var meetingRoom = await _meetingRoomRepository.Create(token, model);
 
-            return RedirectToAction(nameof(Details), new { meetingRoom.Id });
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Update(int id)
+        {
+            var meetingRoom = await _meetingRoomRepository.GetSingle(id);
+
+            return View(meetingRoom);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(MeetingRoomUpdateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var token = HttpContext.Session.GetString("Token");
+            var meetingRoom = await _meetingRoomRepository.Update(token, model);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
