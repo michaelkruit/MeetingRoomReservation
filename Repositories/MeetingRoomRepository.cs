@@ -38,9 +38,20 @@ namespace MeetingRooms.Repositories
             throw new Exception("Meeting room didn't save");
         }
 
-        public Task<bool> Delete(int id)
+        public async Task<bool> Delete(string token, int id)
         {
-            throw new NotImplementedException();
+            var company = GetCompany(token);
+
+            var meetingRoom = await _dbContext.MeetingRooms.FindAsync(id) ??
+                throw new NullReferenceException($"Meeting room not found");
+
+            if (company.Id != meetingRoom.CompanyId)
+            {
+                throw new InvalidOperationException("You are not allowed to delete this meeting room");
+            }
+
+            _dbContext.Remove(meetingRoom);
+            return await _dbContext.SaveChangesAsync() > 0;
         }
 
         public async Task<IEnumerable<MeetingRoom>> GetList(string token)

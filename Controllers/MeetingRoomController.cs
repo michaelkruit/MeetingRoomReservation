@@ -76,5 +76,28 @@ namespace MeetingRooms.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var meetingRoom = await _meetingRoomRepository.GetSingle(id);
+
+            var meetingRoomViewModel = new MeetingRoomViewModel()
+            {
+                Id = id,
+                Name = meetingRoom.Name
+            };
+
+            return View(meetingRoomViewModel);
+        }
+
+        [HttpDelete("Delete")]
+        public async Task<IActionResult> ConfirmDelete(int id)
+        {
+            var token = HttpContext.Session.GetString("Token");
+            await _meetingRoomRepository.Delete(token, id);
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

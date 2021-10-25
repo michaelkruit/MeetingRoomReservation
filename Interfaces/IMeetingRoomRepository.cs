@@ -11,6 +11,6 @@ namespace MeetingRooms.Interfaces
         Task<MeetingRoom> GetSingle(int id);
         Task<MeetingRoom> Create(string token, MeetingRoomCreateViewModel createModel);
         Task<MeetingRoom> Update(string token, MeetingRoomUpdateViewModel updateModel);
-        Task<bool> Delete(int id);
+        Task<bool> Delete(string token, int id);
     }
 }
