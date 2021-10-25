@@ -26,10 +26,13 @@ namespace MeetingRooms.Repositories
             _memoryCache = memoryCache;
         }
 
+        public Company GetCompany(string token)
+            => _memoryCache.Get<Company>(token) ?? throw new Exception("No company found in cache");
+
         public async Task<string> Login(LoginViewModel loginViewModel)
         {
             var company = await _applicationDbContext.Companies.SingleOrDefaultAsync(x => x.Name.ToLower() == loginViewModel.CompanyName.ToLower());
-            if(company == null)
+            if (company == null)
             {
                 throw new Exception("Company does not exist");
                 // return error that company doesn't exist
@@ -38,9 +41,9 @@ namespace MeetingRooms.Repositories
             using var hmac = new HMACSHA512(company.PasswordSalt);
 
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginViewModel.Password));
-            for(int i = 0; i < computedHash.Length; i++)
+            for (int i = 0; i < computedHash.Length; i++)
             {
-                if(computedHash[i] != company.PasswordHash[i])
+                if (computedHash[i] != company.PasswordHash[i])
                 {
                     throw new Exception("Password is not correct");
                     // Password
@@ -48,9 +51,9 @@ namespace MeetingRooms.Repositories
             }
 
             var token = _tokenService.BuildToken(company);
-            
+
             _memoryCache.Set(token, company);
-            
+
             return token;
         }
 
