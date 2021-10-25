@@ -14,17 +14,17 @@ namespace MeetingRooms.Repositories
     public class MeetingRoomRepository : IMeetingRoomRepository
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly IMemoryCache _memoryCache;
+        private readonly IAccountRepository _accountRepository;
 
-        public MeetingRoomRepository(ApplicationDbContext dbContext, IMemoryCache memoryCache)
+        public MeetingRoomRepository(ApplicationDbContext dbContext, IAccountRepository accountRepository)
         {
             _dbContext = dbContext;
-            _memoryCache = memoryCache;
+            _accountRepository = accountRepository;
         }
 
         public async Task<MeetingRoom> Create(string token, MeetingRoomCreateViewModel createModel)
         {
-            var company = GetCompany(token);
+            var company = _accountRepository.GetCompany(token);
             var meetingRoom = new MeetingRoom()
             {
                 CompanyId = company.Id,
@@ -40,7 +40,7 @@ namespace MeetingRooms.Repositories
 
         public async Task<bool> Delete(string token, int id)
         {
-            var company = GetCompany(token);
+            var company = _accountRepository.GetCompany(token);
 
             var meetingRoom = await _dbContext.MeetingRooms.FindAsync(id) ??
                 throw new NullReferenceException($"Meeting room not found");
@@ -56,7 +56,7 @@ namespace MeetingRooms.Repositories
 
         public async Task<IEnumerable<MeetingRoom>> GetList(string token)
         {
-            var company = GetCompany(token);
+            var company = _accountRepository.GetCompany(token);
             var meetingRooms = await _dbContext.MeetingRooms.Where(x => x.CompanyId == company.Id).ToArrayAsync();
             return meetingRooms;
         }
@@ -66,7 +66,7 @@ namespace MeetingRooms.Repositories
 
         public async Task<MeetingRoom> Update(string token, MeetingRoomUpdateViewModel updateModel)
         {
-            var company = GetCompany(token);
+            var company = _accountRepository.GetCompany(token);
 
             var meetingRoom = await _dbContext.MeetingRooms.FindAsync(updateModel.Id) ??
                 throw new NullReferenceException($"Meeting room with name '{updateModel.Name}' not found");
@@ -82,8 +82,5 @@ namespace MeetingRooms.Repositories
 
             return meetingRoom;
         }
-
-        private Company GetCompany(string token)
-            => _memoryCache.Get<Company>(token) ?? throw new Exception("No company found in cache");
     }
 }
