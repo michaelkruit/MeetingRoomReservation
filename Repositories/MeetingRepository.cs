@@ -104,9 +104,31 @@ namespace MeetingRooms.Repositories
             return meeting;
         }
 
-        public Task<Meeting> Update(string token, MeetingUpdateViewModel updateModel)
+        public async Task<Meeting> Update(string token, MeetingUpdateViewModel updateModel)
         {
-            throw new NotImplementedException();
+            var company = _accountRepository.GetCompany(token);
+
+            if (await IsAllowedMeetingRoom(company, updateModel.MeetingRoomId) == false)
+            {
+                throw new InvalidOperationException("No allowed to set selected meeting room");
+            }
+
+            if (await IsOverLapping(updateModel))
+            {
+                throw new InvalidOperationException("This meeting room has an overlapping reservation");
+            }
+
+            var meeting = await _dbContext.Meetings.FindAsync(updateModel.Id);
+
+            meeting.MeetingRoomId = updateModel.MeetingRoomId;
+            meeting.StartDatetime = updateModel.StartDateTime;
+            meeting.EndDatetime = updateModel.EndDateTime;
+            meeting.AttendingCompany = updateModel.AttendingCompany;
+
+            _dbContext.Update(meeting);
+            await _dbContext.SaveChangesAsync();
+
+            return meeting;
         }
 
         // Private helpers
@@ -121,6 +143,16 @@ namespace MeetingRooms.Repositories
             var isOverLapping = _dbContext.Meetings.AnyAsync(x => x.MeetingRoomId == createModel.MeetingRoomId
             && x.StartDatetime < createModel.EndDateTime
             && x.EndDatetime > createModel.StartDateTime);
+
+            return isOverLapping;
+        }
+
+        private Task<bool> IsOverLapping(MeetingUpdateViewModel updateModel)
+        {
+            var isOverLapping = _dbContext.Meetings.AnyAsync(x => x.Id != updateModel.Id
+            && x.MeetingRoomId == updateModel.MeetingRoomId
+            && x.StartDatetime < updateModel.EndDateTime
+            && x.EndDatetime > updateModel.StartDateTime);
 
             return isOverLapping;
         }
