@@ -15,5 +15,7 @@ namespace MeetingRooms.Data.Entities
         public int MeetingRoomId { get; set; }
         [ForeignKey(nameof(MeetingRoomId))]
         public MeetingRoom MeetingRoom { get; set; }
+
+        public virtual Attendees Attendees { get; set; }
     }
 }
