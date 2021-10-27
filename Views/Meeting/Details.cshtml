@@ -1,0 +1,53 @@
+﻿@model MeetingViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Meeting</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Start
+        </dt>
+        <dd class="col-sm-10">
+            @Model.StartShortDateTimeString
+        </dd>
+        <dt class="col-sm-2">
+            End
+        </dt>
+        <dd class="col-sm-10">
+            @Model.EndShortDateTimeString
+        </dd>
+        <dt class="col-sm-2">
+            Attending Company
+        </dt>
+        <dd class="col-sm-10">
+            @Model.AttendingCompany
+        </dd>
+        <dt class="col-sm-2">
+            Meeting room
+        </dt>
+        <dd class="col-sm-10">
+            @Model.MeetingRoom.Name
+        </dd>
+        <dt class="col-sm-2">
+            Attendees
+        </dt>
+        <dd class="col-sm-10">
+            <ul>
+                @foreach (var attendee in Model.Attendees)
+                {
+                    <li>@attendee</li>
+                }
+            </ul>
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

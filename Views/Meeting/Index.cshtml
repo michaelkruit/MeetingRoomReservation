@@ -35,10 +35,10 @@
                     @item.MeetingRoom.Name
                 </td>
                 <th>
-                    @item.StartDateTime.ToLongDateString()
+                    @item.StartShortDateTimeString
                 </th>
                 <th>
-                    @item.EndDateTime.ToLongDateString()
+                    @item.EndShortDateTimeString
                 </th>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

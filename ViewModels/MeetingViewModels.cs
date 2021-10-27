@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace MeetingRooms.ViewModels
 {
@@ -8,6 +10,7 @@ namespace MeetingRooms.ViewModels
         public DateTime EndDateTime { get; set; }
         public string AttendingCompany { get; set; }
         public int MeetingRoomId { get; set; }
+        public string[] Attendees { get; set; }
     }
 
     public class MeetingCreateViewModel : MeetingBaseViewModel { }
@@ -19,6 +22,8 @@ namespace MeetingRooms.ViewModels
 
     public class MeetingViewModel : MeetingUpdateViewModel 
     {
+        public string StartShortDateTimeString => $"{StartDateTime.ToShortDateString()} - {StartDateTime.ToShortTimeString()}";
+        public string EndShortDateTimeString => $"{EndDateTime.ToShortDateString()} - {EndDateTime.ToShortTimeString()}";
         public MeetingRoomViewModel MeetingRoom { get; set; }
     }
 }
