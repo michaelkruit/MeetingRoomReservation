@@ -1,0 +1,51 @@
+﻿@model IEnumerable<MeetingViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Attending Company
+            </th>
+            <th>
+                Meeting room
+            </th>
+            <th>
+                Start
+            </th>
+            <th>
+                End
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.AttendingCompany
+                </td>
+                <td>
+                    @item.MeetingRoom.Name
+                </td>
+                <th>
+                    @item.StartDateTime.ToLongDateString()
+                </th>
+                <th>
+                    @item.EndDateTime.ToLongDateString()
+                </th>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
