@@ -37,6 +37,7 @@ namespace MeetingRooms
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IMeetingRoomRepository, MeetingRoomRepository>();
+            services.AddScoped<IMeetingRepository, MeetingRepository>();
 
             services.AddSession();
 
