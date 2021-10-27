@@ -31,7 +31,8 @@ namespace MeetingRooms.Repositories
         public async Task<IEnumerable<Meeting>> GetCompanyList(string token)
         {
             var company = _accountRepository.GetCompany(token);
-            var meetings = await _dbContext.Meetings.Where(x => x.MeetingRoom.CompanyId == company.Id && x.StartDatetime > DateTime.Now.Date).ToArrayAsync();
+            var meetings = await _dbContext.Meetings.Where(x => x.MeetingRoom.CompanyId == company.Id && x.StartDatetime > DateTime.Now.Date)
+                .OrderBy(x => x.StartDatetime).ToArrayAsync();
 
             return meetings;
         }
@@ -55,7 +56,9 @@ namespace MeetingRooms.Repositories
             }
 
             // Get and return meetings
-            var meetings = await _dbContext.Meetings.Where(x => x.MeetingRoomId == meetingRoomId && x.StartDatetime > DateTime.Now.Date).ToArrayAsync();
+            var meetings = await _dbContext.Meetings.Where(x => x.MeetingRoomId == meetingRoomId && x.StartDatetime > DateTime.Now.Date)
+                .OrderBy(x=>x.StartDatetime).ToArrayAsync();
+
             return meetings;
         }
 
@@ -69,7 +72,7 @@ namespace MeetingRooms.Repositories
         {
             // Get current company
             var company = _accountRepository.GetCompany(token);
-            var meeting = await _dbContext.Meetings.Include(x => x.MeetingRoom).SingleOrDefaultAsync(x => x.Id == id) ??
+            var meeting = await _dbContext.Meetings.Include(x=>x.Attendees).Include(x => x.MeetingRoom).SingleOrDefaultAsync(x => x.Id == id) ??
                 throw new NullReferenceException("Selected meeting room is not found");
 
             // Check if meeting belongs to current company
@@ -131,7 +134,7 @@ namespace MeetingRooms.Repositories
             // Get current comapny
             var company = _accountRepository.GetCompany(token);
             // Find Meeting
-            var meeting = await _dbContext.Meetings.Include(x=>x.MeetingRoom).SingleOrDefaultAsync(x=>x.Id == id)
+            var meeting = await _dbContext.Meetings.Include(x => x.MeetingRoom).SingleOrDefaultAsync(x => x.Id == id)
                 ?? throw new NullReferenceException("Meeting not found");
             // Check of meeting belongs to current company
             if (meeting.MeetingRoom.CompanyId != company.Id)
@@ -143,7 +146,7 @@ namespace MeetingRooms.Repositories
             _dbContext.Remove(meeting);
             return await _dbContext.SaveChangesAsync() > 0;
         }
-        
+
         /// <summary>
         /// Update existing meeting
         /// </summary>
@@ -195,7 +198,7 @@ namespace MeetingRooms.Repositories
             var meetingRoom = await _meetingRoomRepository.GetSingle(meetingRoomId);
             return meetingRoom.CompanyId == company.Id;
         }
-        
+
         /// <summary>
         /// Check if new meeting doesn't overlap with current meetings
         /// </summary>
