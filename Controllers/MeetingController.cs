@@ -32,8 +32,6 @@ namespace MeetingRooms.Controllers
         {
             var meeting = await _meetingRepository.GetSingle(GetToken(), id);
 
-            // Get attendees
-
             var viewModel = MapMeetingViewModel(meeting);
 
             return View(viewModel);
@@ -95,6 +93,21 @@ namespace MeetingRooms.Controllers
             return RedirectToAction(nameof(Details), new { id = updateViewModel.Id });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var meeting = await _meetingRepository.GetSingle(GetToken(), id);
+            var meetingViewModel = MapMeetingViewModel(meeting);
+            return View(meetingViewModel);
+        }
+
+        [HttpDelete("Delete")]
+        public async Task<IActionResult>DeleteConfirmed(int id)
+        {
+            var deleted = await _meetingRepository.Delete(GetToken(), id);
+
+            return deleted ? RedirectToAction(nameof(Index)) : RedirectToAction(nameof(Delete), new { id });
+        }
 
         // private helpers
         private string GetToken() => HttpContext.Session.GetString("Token");
@@ -105,6 +118,7 @@ namespace MeetingRooms.Controllers
             MeetingRoomId = meeting.MeetingRoomId,
             StartDateTime = meeting.StartDatetime,
             EndDateTime = meeting.EndDatetime,
+            Attendees = string.IsNullOrEmpty(meeting.Attendees?.Names) == false ? meeting.Attendees?.Names.Split(",") : null,
             MeetingRoom = new MeetingRoomViewModel()
             {
                 CompanyId = meeting.MeetingRoom.CompanyId,
