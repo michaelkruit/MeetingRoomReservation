@@ -17,5 +17,8 @@ namespace MeetingRooms.ViewModels
         public int Id { get; set; }
     }
 
-    public class MeetingViewModel : MeetingUpdateViewModel { }
+    public class MeetingViewModel : MeetingUpdateViewModel 
+    {
+        public MeetingRoomViewModel MeetingRoom { get; set; }
+    }
 }
