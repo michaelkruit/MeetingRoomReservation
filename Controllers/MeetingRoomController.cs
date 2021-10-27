@@ -19,9 +19,7 @@ namespace MeetingRooms.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var token = HttpContext.Session.GetString("Token");
-
-            var meetingRooms = await _meetingRoomRepository.GetList(token);
+            var meetingRooms = await _meetingRoomRepository.GetList(GetToken());
 
             // Map to viewmodel
             var meetingRoomsViewModel = meetingRooms.Select(x => new MeetingRoomViewModel()
@@ -48,9 +46,7 @@ namespace MeetingRooms.Controllers
                 return View(model);
             }
 
-            var token = HttpContext.Session.GetString("Token");
-
-            var meetingRoom = await _meetingRoomRepository.Create(token, model);
+            var meetingRoom = await _meetingRoomRepository.Create(GetToken(), model);
 
             return RedirectToAction(nameof(Index));
         }
@@ -71,8 +67,7 @@ namespace MeetingRooms.Controllers
                 return View(model);
             }
 
-            var token = HttpContext.Session.GetString("Token");
-            var meetingRoom = await _meetingRoomRepository.Update(token, model);
+            var meetingRoom = await _meetingRoomRepository.Update(GetToken(), model);
 
             return RedirectToAction(nameof(Index));
         }
@@ -94,10 +89,11 @@ namespace MeetingRooms.Controllers
         [HttpDelete("Delete")]
         public async Task<IActionResult> ConfirmDelete(int id)
         {
-            var token = HttpContext.Session.GetString("Token");
-            await _meetingRoomRepository.Delete(token, id);
+            await _meetingRoomRepository.Delete(GetToken(), id);
 
             return RedirectToAction(nameof(Index));
         }
+
+        private string GetToken() => HttpContext.Session.GetString("Token");
     }
 }
