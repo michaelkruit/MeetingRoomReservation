@@ -30,7 +30,9 @@ namespace MeetingRooms.Repositories
         /// <returns></returns>
         public async Task<IEnumerable<Meeting>> GetCompanyList(string token)
         {
+            // Get current company
             var company = _accountRepository.GetCompany(token);
+            // Get all meetings starting from today order by StartDatetime
             var meetings = await _dbContext.Meetings.Where(x => x.MeetingRoom.CompanyId == company.Id && x.StartDatetime > DateTime.Now.Date)
                 .OrderBy(x => x.StartDatetime).ToArrayAsync();
 

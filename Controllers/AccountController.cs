@@ -24,12 +24,16 @@ namespace MeetingRooms.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel) 
         {
+            // Check if model is filled in correct
             if (!ModelState.IsValid)
             {
                 return View(loginViewModel);
             }
+
+            // Log user in and generate token
             var token = await _accountRepository.Login(loginViewModel);
 
+            // Set token
             HttpContext.Session.SetString("Token", token);
 
             return RedirectToAction("Index", "MeetingRoom");
@@ -44,7 +48,9 @@ namespace MeetingRooms.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
+            // Register user
             var succes = await _accountRepository.Register(registerViewModel);
+            // If user is registered go to login else try again
             return succes ? RedirectToAction(nameof(Login)) : View(registerViewModel);
         }
 

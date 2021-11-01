@@ -22,41 +22,16 @@ namespace MeetingRooms.Repositories
             _accountRepository = accountRepository;
         }
 
-        public async Task<MeetingRoom> Create(string token, MeetingRoomCreateViewModel createModel)
-        {
-            var company = _accountRepository.GetCompany(token);
-            var meetingRoom = new MeetingRoom()
-            {
-                CompanyId = company.Id,
-                Name = createModel.Name
-            };
-            _dbContext.Add(meetingRoom);
-            if (await _dbContext.SaveChangesAsync() > 0)
-            {
-                return meetingRoom;
-            }
-            throw new Exception("Meeting room didn't save");
-        }
-
-        public async Task<bool> Delete(string token, int id)
-        {
-            var company = _accountRepository.GetCompany(token);
-
-            var meetingRoom = await _dbContext.MeetingRooms.FindAsync(id) ??
-                throw new NullReferenceException($"Meeting room not found");
-
-            if (company.Id != meetingRoom.CompanyId)
-            {
-                throw new InvalidOperationException("You are not allowed to delete this meeting room");
-            }
-
-            _dbContext.Remove(meetingRoom);
-            return await _dbContext.SaveChangesAsync() > 0;
-        }
-
+        /// <summary>
+        /// Get list of meeting rooms
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<MeetingRoom>> GetList(string token)
         {
+            // Get current company
             var company = _accountRepository.GetCompany(token);
+            // Get all meeting rooms of company
             var meetingRooms = await _dbContext.MeetingRooms.Where(x => x.CompanyId == company.Id).ToArrayAsync();
             return meetingRooms;
         }
@@ -64,23 +39,118 @@ namespace MeetingRooms.Repositories
         public async Task<MeetingRoom> GetSingle(int id)
             => await _dbContext.MeetingRooms.SingleOrDefaultAsync(x => x.Id == id) ?? throw new Exception("Meeting room not found");
 
-        public async Task<MeetingRoom> Update(string token, MeetingRoomUpdateViewModel updateModel)
+        /// <summary>
+        /// Create new meeting room
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="createModel"></param>
+        /// <returns></returns>
+        public async Task<MeetingRoom> Create(string token, MeetingRoomCreateViewModel createModel)
         {
+            // Get current company
             var company = _accountRepository.GetCompany(token);
 
+            // Check if meeting room not already exist in company
+            if(await MeetingRoomExist(createModel.Name, company.Id, meetingRoomId: null))
+            {
+                throw new Exception($"Meeting room with name '{createModel.Name}' already exist");
+            }
+
+            // Create new meeting room entity
+            var meetingRoom = new MeetingRoom()
+            {
+                CompanyId = company.Id,
+                Name = createModel.Name
+            };
+            
+            // Add entity to db
+            _dbContext.Add(meetingRoom);
+
+            // Save and check if that was successfull
+            if (await _dbContext.SaveChangesAsync() > 0)
+            {
+                return meetingRoom;
+            }
+            // Throw exception if it didn't work
+            throw new Exception("Meeting room didn't save");
+        }
+
+        /// <summary>
+        /// Update meeting room
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="updateModel"></param>
+        /// <returns></returns>
+        public async Task<MeetingRoom> Update(string token, MeetingRoomUpdateViewModel updateModel)
+        {
+            // Get current company
+            var company = _accountRepository.GetCompany(token);
+
+            // Find meeting room
             var meetingRoom = await _dbContext.MeetingRooms.FindAsync(updateModel.Id) ??
                 throw new NullReferenceException($"Meeting room with name '{updateModel.Name}' not found");
 
+            // Check if meeting room is linked to current company
             if (company.Id != meetingRoom.CompanyId)
             {
                 throw new InvalidOperationException("You are not allowed to update this meeting room");
             }
 
+            // Check if meeting room already exist
+            if(await MeetingRoomExist(updateModel.Name, company.Id, meetingRoom.Id))
+            {
+                throw new InvalidOperationException($"Meeting room with name '{updateModel.Name}' already exist in this company");
+            }
+
+            // Update the name
             meetingRoom.Name = updateModel.Name;
+
+            // Update record in Db
             _dbContext.Update(meetingRoom);
+
+            // Save changes
             await _dbContext.SaveChangesAsync();
 
+            // Return meeting room
             return meetingRoom;
         }
+
+        /// <summary>
+        /// Delete meeting room
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<bool> Delete(string token, int id)
+        {
+            // Get company
+            var company = _accountRepository.GetCompany(token);
+
+            // Get meeting room
+            var meetingRoom = await _dbContext.MeetingRooms.FindAsync(id) ??
+                throw new NullReferenceException($"Meeting room not found");
+
+            // Check if meeting room is linked to the users company
+            if (company.Id != meetingRoom.CompanyId)
+            {
+                throw new InvalidOperationException("You are not allowed to delete this meeting room");
+            }
+
+            // Remove and save
+            _dbContext.Remove(meetingRoom);
+            return await _dbContext.SaveChangesAsync() > 0;
+        }
+
+        /// <summary>
+        /// Helper method to check if meeting room already exist
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="companyId"></param>
+        /// <param name="meetingRoomId"></param>
+        /// <returns></returns>
+        private async Task<bool> MeetingRoomExist(string name, int companyId, int? meetingRoomId)
+            => await _dbContext.MeetingRooms.AnyAsync(x => x.CompanyId == companyId 
+            && x.Name.ToLower() == name.ToLower()
+            && (meetingRoomId.HasValue == false || x.Id != meetingRoomId.Value));
     }
 }
