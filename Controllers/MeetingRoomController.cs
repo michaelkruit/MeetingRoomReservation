@@ -1,4 +1,5 @@
-﻿using MeetingRooms.Interfaces;
+﻿using MeetingRooms.Data.Entities;
+using MeetingRooms.Interfaces;
 using MeetingRooms.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,12 +24,7 @@ namespace MeetingRooms.Controllers
             var meetingRooms = await _meetingRoomRepository.GetList(GetToken());
 
             // Map to viewmodel
-            var meetingRoomsViewModel = meetingRooms.Select(x => new MeetingRoomViewModel()
-            {
-                CompanyId = x.CompanyId,
-                Id = x.Id,
-                Name = x.Name
-            });
+            var meetingRoomsViewModel = meetingRooms.Select(x => MapToViewModel(x));
 
             return View(meetingRoomsViewModel);
         }
@@ -60,7 +56,9 @@ namespace MeetingRooms.Controllers
             // Get selected meeting room
             var meetingRoom = await _meetingRoomRepository.GetSingle(id);
 
-            return View(meetingRoom);
+            var viewModel = MapToViewModel(meetingRoom);
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -85,11 +83,7 @@ namespace MeetingRooms.Controllers
             var meetingRoom = await _meetingRoomRepository.GetSingle(id);
 
             // Create new meeting room viewmodel
-            var meetingRoomViewModel = new MeetingRoomViewModel()
-            {
-                Id = id,
-                Name = meetingRoom.Name
-            };
+            var meetingRoomViewModel = MapToViewModel(meetingRoom);
 
             return View(meetingRoomViewModel);
         }
@@ -105,5 +99,13 @@ namespace MeetingRooms.Controllers
 
         // Helper to get token from session
         private string GetToken() => HttpContext.Session.GetString("Token");
+
+        private MeetingRoomViewModel MapToViewModel(MeetingRoom meetingRoom)
+            => new MeetingRoomViewModel()
+            {
+                CompanyId = meetingRoom.CompanyId,
+                Id = meetingRoom.Id,
+                Name = meetingRoom.Name
+            };
     }
 }

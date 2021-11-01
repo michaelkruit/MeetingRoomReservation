@@ -1,7 +1,10 @@
-﻿namespace MeetingRooms.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MeetingRooms.ViewModels
 {
     public abstract class MeetingRoomBaseViewModel
     {
+        [Required]
         public string Name { get; set; }
         public int CompanyId { get; set; }
     }
