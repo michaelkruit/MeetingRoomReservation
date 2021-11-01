@@ -60,7 +60,7 @@ namespace MeetingRooms.Repositories
 
             // Get and return meetings
             var meetings = await _dbContext.Meetings.Include(x => x.Attendees).Include(x => x.MeetingRoom)
-                .Where(x => x.MeetingRoomId == meetingRoomId && x.StartDatetime > DateTime.Now.Date)
+                .Where(x => x.MeetingRoomId == meetingRoomId && x.StartDatetime > DateTime.Now)
                 .OrderBy(x => x.StartDatetime).ToArrayAsync();
 
             return meetings;
