@@ -33,7 +33,8 @@ namespace MeetingRooms.Repositories
             // Get current company
             var company = _accountRepository.GetCompany(token);
             // Get all meetings starting from today order by StartDatetime
-            var meetings = await _dbContext.Meetings.Where(x => x.MeetingRoom.CompanyId == company.Id && x.StartDatetime > DateTime.Now.Date)
+            var meetings = await _dbContext.Meetings.Include(x => x.Attendees).Include(x => x.MeetingRoom)
+                .Where(x => x.MeetingRoom.CompanyId == company.Id && x.StartDatetime > DateTime.Now.Date)
                 .OrderBy(x => x.StartDatetime).ToArrayAsync();
 
             return meetings;
@@ -58,8 +59,9 @@ namespace MeetingRooms.Repositories
             }
 
             // Get and return meetings
-            var meetings = await _dbContext.Meetings.Where(x => x.MeetingRoomId == meetingRoomId && x.StartDatetime > DateTime.Now.Date)
-                .OrderBy(x=>x.StartDatetime).ToArrayAsync();
+            var meetings = await _dbContext.Meetings.Include(x => x.Attendees).Include(x => x.MeetingRoom)
+                .Where(x => x.MeetingRoomId == meetingRoomId && x.StartDatetime > DateTime.Now.Date)
+                .OrderBy(x => x.StartDatetime).ToArrayAsync();
 
             return meetings;
         }
@@ -74,7 +76,7 @@ namespace MeetingRooms.Repositories
         {
             // Get current company
             var company = _accountRepository.GetCompany(token);
-            var meeting = await _dbContext.Meetings.Include(x=>x.Attendees).Include(x => x.MeetingRoom).SingleOrDefaultAsync(x => x.Id == id) ??
+            var meeting = await _dbContext.Meetings.Include(x => x.Attendees).Include(x => x.MeetingRoom).SingleOrDefaultAsync(x => x.Id == id) ??
                 throw new NullReferenceException("Selected meeting room is not found");
 
             // Check if meeting belongs to current company
@@ -101,6 +103,12 @@ namespace MeetingRooms.Repositories
             if (await IsAllowedMeetingRoom(company, createModel.MeetingRoomId) == false)
             {
                 throw new AccessViolationException("No allowed to set selected meeting room");
+            }
+
+            // Check if the end date is smaller
+            if (CorrectDates(createModel.StartDateTime, createModel.EndDateTime))
+            {
+                throw new InvalidOperationException("End date must be greater then the start date");
             }
 
             // Check if the selected meeting isn't reserverd 
@@ -166,6 +174,11 @@ namespace MeetingRooms.Repositories
                 throw new InvalidOperationException("No allowed to set selected meeting room");
             }
 
+            if(CorrectDates(updateModel.StartDateTime, updateModel.EndDateTime))
+            {
+                throw new InvalidOperationException("End date must be greater then the start date");
+            }
+
             // Check if meeting room is not reserved
             if (await IsOverLapping(updateModel))
             {
@@ -221,5 +234,13 @@ namespace MeetingRooms.Repositories
             && x.MeetingRoomId == updateModel.MeetingRoomId
             && x.StartDatetime < updateModel.EndDateTime
             && x.EndDatetime > updateModel.StartDateTime);
+
+        /// <summary>
+        ///  Check if end date is greater then the start date
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        private bool CorrectDates(DateTime start, DateTime end) => start < end;
     }
 }

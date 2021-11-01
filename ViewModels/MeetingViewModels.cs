@@ -6,18 +6,22 @@ namespace MeetingRooms.ViewModels
 {
     public abstract class MeetingBaseViewModel
     {
-        public DateTime StartDateTime { get; set; }
-        public DateTime EndDateTime { get; set; }
+        public DateTime StartDateTime { get; set; } = DateTime.Now.Date;
+        public DateTime EndDateTime { get; set; } = DateTime.Now.Date;
         public string AttendingCompany { get; set; }
         public int MeetingRoomId { get; set; }
         public string[] Attendees { get; set; }
     }
 
-    public class MeetingCreateViewModel : MeetingBaseViewModel { }
+    public class MeetingCreateViewModel : MeetingBaseViewModel 
+    {
+        public IEnumerable<MeetingRoomViewModel> MeetingRooms { get; set; }
+    }
     
     public class MeetingUpdateViewModel : MeetingBaseViewModel 
     {
         public int Id { get; set; }
+        public IEnumerable<MeetingRoomViewModel> MeetingRooms { get; set; }
     }
 
     public class MeetingViewModel : MeetingUpdateViewModel 

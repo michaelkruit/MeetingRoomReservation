@@ -3,6 +3,7 @@ using MeetingRooms.Interfaces;
 using MeetingRooms.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,10 +12,12 @@ namespace MeetingRooms.Controllers
     public class MeetingController : Controller
     {
         private readonly IMeetingRepository _meetingRepository;
+        private readonly IMeetingRoomRepository _meetingRoomRepository;
 
-        public MeetingController(IMeetingRepository meetingRepository)
+        public MeetingController(IMeetingRepository meetingRepository, IMeetingRoomRepository meetingRoomRepository)
         {
             _meetingRepository = meetingRepository;
+            _meetingRoomRepository = meetingRoomRepository;
         }
 
         [HttpGet]
@@ -22,7 +25,7 @@ namespace MeetingRooms.Controllers
         {
             // Get meetings
             var meetings = await _meetingRepository.GetCompanyList(GetToken());
-            
+
             // Map meetings to viewmodels
             var meetingsViewModel = meetings.Select(x => MapMeetingViewModel(x));
 
@@ -42,23 +45,25 @@ namespace MeetingRooms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create(int meetingRoomId)
+        public async Task<IActionResult> Create(int meetingRoomId)
         {
             // Create new meeting with meeting and set meetingroom when available (can be 0)
             var viewModel = new MeetingCreateViewModel()
             {
-                MeetingRoomId = meetingRoomId
+                MeetingRoomId = meetingRoomId,
+                MeetingRooms = await GetMeetingRooms()
             };
 
             return View(viewModel);
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> Create(MeetingCreateViewModel createViewModel)
         {
             // Check if model is filled correct
             if (!ModelState.IsValid)
             {
+                createViewModel.MeetingRooms = await GetMeetingRooms();
                 return View(createViewModel);
             }
 
@@ -75,14 +80,8 @@ namespace MeetingRooms.Controllers
             // Get selected meeting
             var meeting = await _meetingRepository.GetSingle(GetToken(), id);
 
-            var updateViewModel = new MeetingUpdateViewModel()
-            {
-                AttendingCompany = meeting.AttendingCompany,
-                EndDateTime = meeting.EndDatetime,
-                Id = meeting.Id,
-                MeetingRoomId = meeting.MeetingRoomId,
-                StartDateTime = meeting.StartDatetime
-            };
+            var updateViewModel = MapMeetingViewModel(meeting);
+            updateViewModel.MeetingRooms = await GetMeetingRooms();
 
             return View(updateViewModel);
         }
@@ -93,6 +92,7 @@ namespace MeetingRooms.Controllers
             // Check if model is filled in correct
             if (!ModelState.IsValid)
             {
+                updateViewModel.MeetingRooms = await GetMeetingRooms();
                 return View(updateViewModel);
             }
 
@@ -116,7 +116,7 @@ namespace MeetingRooms.Controllers
         }
 
         [HttpDelete("Delete")]
-        public async Task<IActionResult>DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             // Delete meeting
             var deleted = await _meetingRepository.Delete(GetToken(), id);
@@ -142,6 +142,7 @@ namespace MeetingRooms.Controllers
             MeetingRoomId = meeting.MeetingRoomId,
             StartDateTime = meeting.StartDatetime,
             EndDateTime = meeting.EndDatetime,
+            AttendingCompany = meeting.AttendingCompany,
             Attendees = string.IsNullOrEmpty(meeting.Attendees?.Names) == false ? meeting.Attendees?.Names.Split(",") : null,
             MeetingRoom = new MeetingRoomViewModel()
             {
@@ -150,5 +151,22 @@ namespace MeetingRooms.Controllers
                 Name = meeting.MeetingRoom.Name
             }
         };
+
+        /// <summary>
+        /// Get and map meeting rooms to viewmodels
+        /// </summary>
+        /// <returns></returns>
+        private async Task<IEnumerable<MeetingRoomViewModel>> GetMeetingRooms()
+        {
+            // Get meeting rooms
+            var meetingRooms = await _meetingRoomRepository.GetList(GetToken());
+
+            return meetingRooms.Select(x => new MeetingRoomViewModel()
+            {
+                CompanyId = x.CompanyId,
+                Id = x.Id,
+                Name = x.Name
+            });
+        }
     }
 }
