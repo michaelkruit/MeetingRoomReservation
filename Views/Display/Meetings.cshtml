@@ -1,0 +1,15 @@
+﻿@model DisplayViewModel
+@{
+    Layout = null;
+}
+
+<h1>@Model.CurrentDateTime</h1>
+@Model.MeetingRoomName
+<input type="hidden" asp-for="MeetingRoomId" />
+
+<ul>
+    @foreach (var item in Model.Meetings)
+    {
+        <li>@item.StartShortDateTimeString - @item.EndShortDateTimeString</li>
+    }
+</ul>

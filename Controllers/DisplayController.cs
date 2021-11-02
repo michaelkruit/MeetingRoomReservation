@@ -1,4 +1,5 @@
-﻿using MeetingRooms.Interfaces;
+﻿using MeetingRooms.Data.Entities;
+using MeetingRooms.Interfaces;
 using MeetingRooms.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,8 @@ namespace MeetingRooms.Controllers
             _meetingRepository = meetingRepository;
         }
 
-        public async Task<IActionResult> ShowMeetings(int meetingRoomId)
+        [HttpGet]
+        public async Task<IActionResult> Meetings(int meetingRoomId = 1)
         {
             // Get meeting room
             var meetingRoom = await _meetingRoomRepository.GetSingle(meetingRoomId);
@@ -32,23 +34,30 @@ namespace MeetingRooms.Controllers
             {
                 MeetingRoomId = meetingRoomId,
                 MeetingRoomName = meetingRoom.Name,
-                Meetings = meetings.Select(x => new MeetingViewModel()
-                {
-                    Id = x.Id,
-                    AttendingCompany = x.AttendingCompany,
-                    StartDateTime = x.StartDatetime,
-                    EndDateTime = x.EndDatetime
-                })
+                Meetings = meetings.Select(x => MapMeetingsToViewModel(x))
             };
 
             return View(viewModel);
         }
 
+        [HttpGet]
         public async Task<JsonResult> GetMeetings(int meetingRoomId)
         {
             var meetings = await _meetingRepository.GetMeetingRoomList(GetToken(), meetingRoomId);
-            return new JsonResult(new { meetings });
+            var viewModel = meetings.Select(x => MapMeetingsToViewModel(x));
+
+            return new JsonResult(viewModel);
         }
+
+        private MeetingViewModel MapMeetingsToViewModel(Meeting meeting)
+            => new MeetingViewModel()
+            {
+                AttendingCompany = meeting.AttendingCompany,
+                EndDateTime = meeting.EndDatetime,
+                Id = meeting.Id,
+                StartDateTime = meeting.StartDatetime,
+                Attendees = string.IsNullOrEmpty(meeting.Attendees?.Names) == false ? meeting.Attendees?.Names.Split(",") : null
+            };
 
         private string GetToken() => HttpContext.Session.GetString("Token");
     }
