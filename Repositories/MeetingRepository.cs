@@ -106,7 +106,7 @@ namespace MeetingRooms.Repositories
             }
 
             // Check if the end date is smaller
-            if (CorrectDates(createModel.StartDateTime, createModel.EndDateTime))
+            if (InCorrectDates(createModel.StartDateTime, createModel.EndDateTime))
             {
                 throw new InvalidOperationException("End date must be greater then the start date");
             }
@@ -174,7 +174,7 @@ namespace MeetingRooms.Repositories
                 throw new InvalidOperationException("No allowed to set selected meeting room");
             }
 
-            if(CorrectDates(updateModel.StartDateTime, updateModel.EndDateTime))
+            if(InCorrectDates(updateModel.StartDateTime, updateModel.EndDateTime))
             {
                 throw new InvalidOperationException("End date must be greater then the start date");
             }
@@ -241,6 +241,6 @@ namespace MeetingRooms.Repositories
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
-        private bool CorrectDates(DateTime start, DateTime end) => start < end;
+        private bool InCorrectDates(DateTime start, DateTime end) => start > end;
     }
 }
