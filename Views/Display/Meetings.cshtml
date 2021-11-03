@@ -2,14 +2,39 @@
 @{
     Layout = null;
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container pt-5">
+        <input type="hidden" asp-for="MeetingRoomId" />
+        <div class="row">
+            <div class="col">
+                <h2>@Model.MeetingRoomName <span id="time">@DateTime.Now.ToShortTimeString()</span></h2>
+                <br />
+                <h3 id="meeting-time"></h3>
+                <br />
+                <h3 id="attending-company"></h3>
+            </div>
+            <div class="col">
+                <h2>Upcoming meetings</h2>
+                <br />
+                <ul id="meetings">
+                    @foreach (var item in Model.Meetings)
+                    {
+                        <li id="@item.Id">@item.AttendingCompany @item.StartShortTimeString - @item.EndShortTimeString</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
 
-<h1>@Model.CurrentDateTime</h1>
-@Model.MeetingRoomName
-<input type="hidden" asp-for="MeetingRoomId" />
-
-<ul>
-    @foreach (var item in Model.Meetings)
-    {
-        <li>@item.StartShortDateTimeString - @item.EndShortDateTimeString</li>
-    }
-</ul>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/getMeetings.js" asp-append-version="true"></script>
+</body>
+</html>
