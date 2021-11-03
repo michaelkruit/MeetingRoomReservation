@@ -27,7 +27,9 @@ namespace MeetingRooms.ViewModels
     public class MeetingViewModel : MeetingUpdateViewModel 
     {
         public string StartShortDateTimeString => $"{StartDateTime.ToShortDateString()} - {StartDateTime.ToShortTimeString()}";
+        public string StartShortTimeString => StartDateTime.ToShortTimeString();
         public string EndShortDateTimeString => $"{EndDateTime.ToShortDateString()} - {EndDateTime.ToShortTimeString()}";
+        public string EndShortTimeString => EndDateTime.ToShortTimeString(); 
         public MeetingRoomViewModel MeetingRoom { get; set; }
     }
 }
