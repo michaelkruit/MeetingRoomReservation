@@ -20,6 +20,20 @@ namespace MeetingRooms.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var meetingRooms = await _meetingRoomRepository.GetList(GetToken());
+            var viewModel = meetingRooms.Select(x => new MeetingRoomViewModel()
+            {
+                CompanyId = x.CompanyId,
+                Id = x.Id,
+                Name = x.Name
+            });
+
+            return View(viewModel);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Meetings(int meetingRoomId = 1)
         {
             // Get meeting room
