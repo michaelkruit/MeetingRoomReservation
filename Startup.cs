@@ -79,7 +79,9 @@ namespace MeetingRooms
                 }
                 await next();
             });
+
             app.UseHttpsRedirection();
+            app.UseDefaultFiles();
             app.UseStaticFiles();
 
             app.UseRouting();
