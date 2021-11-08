@@ -56,7 +56,7 @@ namespace MeetingRooms.Repositories
             // Check if meetingroom belongs to current company
             if (meetingRoom.CompanyId != company.Id)
             {
-                throw new MeetingRoomException("You are not allowd to get meetings for this meeting room");
+                throw new InvalidMeetingRoomOperationException("You are not allowd to get meetings for this meeting room");
             }
 
             // Get and return meetings
@@ -78,12 +78,12 @@ namespace MeetingRooms.Repositories
             // Get current company
             var company = _accountRepository.GetCompany(token);
             var meeting = await _dbContext.Meetings.Include(x => x.Attendees).Include(x => x.MeetingRoom).SingleOrDefaultAsync(x => x.Id == id) ??
-                throw new MeetingRoomException("Selected meeting room is not found");
+                throw new InvalidMeetingRoomOperationException("Selected meeting room is not found");
 
             // Check if meeting belongs to current company
             if (meeting.MeetingRoom.CompanyId != company.Id)
             {
-                throw new MeetingRoomException("You are not allowd to get meetings for this meeting room");
+                throw new InvalidMeetingRoomOperationException("You are not allowd to get meetings for this meeting room");
             }
 
             return meeting;
@@ -103,7 +103,7 @@ namespace MeetingRooms.Repositories
             // Check if user is allowed to use meeting room
             if (await IsAllowedMeetingRoom(company, createModel.MeetingRoomId) == false)
             {
-                throw new MeetingRoomException("No allowed to set selected meeting room");
+                throw new InvalidMeetingRoomOperationException("No allowed to set selected meeting room");
             }
 
             // Check if the end date is smaller
@@ -150,7 +150,7 @@ namespace MeetingRooms.Repositories
             // Check of meeting belongs to current company
             if (meeting.MeetingRoom.CompanyId != company.Id)
             {
-                throw new MeetingRoomException("You are not allowed to delete this meeting");
+                throw new InvalidMeetingRoomOperationException("You are not allowed to delete this meeting");
             }
 
             // Remove from db and save
@@ -172,7 +172,7 @@ namespace MeetingRooms.Repositories
             // Check if user is allowed to use the selected meetingroom
             if (await IsAllowedMeetingRoom(company, updateModel.MeetingRoomId) == false)
             {
-                throw new MeetingRoomException("No allowed to set selected meeting room");
+                throw new InvalidMeetingRoomOperationException("No allowed to set selected meeting room");
             }
 
             if(InCorrectDates(updateModel.StartDateTime, updateModel.EndDateTime))

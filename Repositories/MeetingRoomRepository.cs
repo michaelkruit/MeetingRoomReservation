@@ -38,7 +38,7 @@ namespace MeetingRooms.Repositories
         }
 
         public async Task<MeetingRoom> GetSingle(int id)
-            => await _dbContext.MeetingRooms.SingleOrDefaultAsync(x => x.Id == id) ?? throw new MeetingRoomException("Meeting room not found");
+            => await _dbContext.MeetingRooms.SingleOrDefaultAsync(x => x.Id == id) ?? throw new InvalidMeetingRoomOperationException("Meeting room not found");
 
         /// <summary>
         /// Create new meeting room
@@ -90,7 +90,7 @@ namespace MeetingRooms.Repositories
             // Check if meeting room is linked to current company
             if (company.Id != meetingRoom.CompanyId)
             {
-                throw new MeetingRoomException("You are not allowed to update this meeting room");
+                throw new InvalidMeetingRoomOperationException("You are not allowed to update this meeting room");
             }
 
             // Check if meeting room already exist
@@ -125,12 +125,12 @@ namespace MeetingRooms.Repositories
 
             // Get meeting room
             var meetingRoom = await _dbContext.MeetingRooms.FindAsync(id) ??
-                throw new MeetingRoomException($"Meeting room not found");
+                throw new InvalidMeetingRoomOperationException($"Meeting room not found");
 
             // Check if meeting room is linked to the users company
             if (company.Id != meetingRoom.CompanyId)
             {
-                throw new MeetingRoomException("You are not allowed to delete this meeting room");
+                throw new InvalidMeetingRoomOperationException("You are not allowed to delete this meeting room");
             }
 
             // Remove and save
