@@ -1,4 +1,5 @@
 ﻿using MeetingRooms.Data.Entities;
+using MeetingRooms.Exceptions;
 using MeetingRooms.Interfaces;
 using MeetingRooms.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -67,11 +68,19 @@ namespace MeetingRooms.Controllers
                 return View(createViewModel);
             }
 
-            // Create new meeting
-            var meeting = await _meetingRepository.Create(GetToken(), createViewModel);
+            try
+            {
 
-            // Redirect to meeting details
-            return RedirectToAction(nameof(Details), new { id = meeting.Id });
+                // Create new meeting
+                var meeting = await _meetingRepository.Create(GetToken(), createViewModel);
+                // Redirect to meeting details
+                return RedirectToAction(nameof(Details), new { id = meeting.Id });
+            }
+            catch (MeetingRoomException e)
+            {
+                ModelState.AddModelError(string.Empty, e.Message);
+                return View(createViewModel);
+            }
         }
 
         [HttpGet]
@@ -96,11 +105,19 @@ namespace MeetingRooms.Controllers
                 return View(updateViewModel);
             }
 
-            // Update meeting
-            await _meetingRepository.Update(GetToken(), updateViewModel);
+            try
+            {
+                // Update meeting
+                await _meetingRepository.Update(GetToken(), updateViewModel);
 
-            // Redirect to details
-            return RedirectToAction(nameof(Details), new { id = updateViewModel.Id });
+                // Redirect to details
+                return RedirectToAction(nameof(Details), new { id = updateViewModel.Id });
+            }
+            catch (MeetingRoomException e)
+            {
+                ModelState.AddModelError(string.Empty, e.Message);
+                return View(updateViewModel);
+            }
         }
 
         [HttpGet]

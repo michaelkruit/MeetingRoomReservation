@@ -1,4 +1,5 @@
 ﻿using MeetingRooms.Data.Entities;
+using MeetingRooms.Exceptions;
 using MeetingRooms.Interfaces;
 using MeetingRooms.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -39,15 +40,23 @@ namespace MeetingRooms.Controllers
         public async Task<IActionResult> Create(MeetingRoomCreateViewModel model)
         {
             // Check if filed in model is valid
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            // Create new meeting room
-            var meetingRoom = await _meetingRoomRepository.Create(GetToken(), model);
+            try
+            {
+                // Create new meeting room
+                var meetingRoom = await _meetingRoomRepository.Create(GetToken(), model);
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (MeetingRoomException e)
+            {
+                ModelState.AddModelError(string.Empty, e.Message);
+                return View(model);
+            }
         }
 
         [HttpGet]
@@ -70,10 +79,18 @@ namespace MeetingRooms.Controllers
                 return View(model);
             }
 
-            // Update existing meeting room
-            var meetingRoom = await _meetingRoomRepository.Update(GetToken(), model);
+            try
+            {
+                // Update existing meeting room
+                var meetingRoom = await _meetingRoomRepository.Update(GetToken(), model);
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (MeetingRoomException e)
+            {
+                ModelState.AddModelError(string.Empty, e.Message);
+                return View(model);
+            }
         }
 
         [HttpGet]

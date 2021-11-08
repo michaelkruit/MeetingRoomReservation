@@ -1,5 +1,6 @@
 ﻿using MeetingRooms.Data;
 using MeetingRooms.Data.Entities;
+using MeetingRooms.Exceptions;
 using MeetingRooms.Interfaces;
 using MeetingRooms.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -43,7 +44,7 @@ namespace MeetingRooms.Repositories
         {
             // Get company
             var company = await _applicationDbContext.Companies.SingleOrDefaultAsync(x => x.Name.ToLower() == loginViewModel.CompanyName.ToLower()) 
-                ?? throw new Exception("Company does not exist");
+                ?? throw new AccountException("Company does not exist");
 
             // Initialze new HAMCSHA512 with password salt
             using var hmac = new HMACSHA512(company.PasswordSalt);
@@ -56,7 +57,7 @@ namespace MeetingRooms.Repositories
             {
                 if (computedHash[i] != company.PasswordHash[i])
                 {
-                    throw new Exception("Password is not correct");
+                    throw new AccountException("Password is not correct");
                 }
             }
 
@@ -87,7 +88,7 @@ namespace MeetingRooms.Repositories
             // Check if company name not already exist
             if (await CompanyExist(registerViewModel.CompanyName))
             {
-                return false;
+                throw new AccountException($"Company '{registerViewModel.CompanyName}' already exist");
             }
 
             // Initialize new HMACSHA512

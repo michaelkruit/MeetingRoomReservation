@@ -9,6 +9,7 @@
 <h4>Meeting</h4>
 <hr />
 <div class="row">
+    @Html.ValidationSummary(false, string.Empty, new { @class = "text-danger" })
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -29,7 +30,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="MeetingRoomId" class="control-label">Meeting Room</label>
-                <select asp-for="MeetingRoomId" class ="form-control" asp-items="@(new SelectList(Model.MeetingRooms, "Id", "Name", Model.MeetingRoomId))">
+                <select asp-for="MeetingRoomId" class="form-control" asp-items="@(new SelectList(Model.MeetingRooms, "Id", "Name", Model.MeetingRoomId))">
                     <option value="@null" label="Select Meeting Room"></option>
                 </select>
                 <span asp-validation-for="MeetingRoomId" class="text-danger"></span>

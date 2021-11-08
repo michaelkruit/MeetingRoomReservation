@@ -1,4 +1,5 @@
-﻿using MeetingRooms.Interfaces;
+﻿using MeetingRooms.Exceptions;
+using MeetingRooms.Interfaces;
 using MeetingRooms.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ namespace MeetingRooms.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel loginViewModel) 
+        public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
             // Check if model is filled in correct
             if (!ModelState.IsValid)
@@ -30,8 +31,19 @@ namespace MeetingRooms.Controllers
                 return View(loginViewModel);
             }
 
-            // Log user in and generate token
-            var token = await _accountRepository.Login(loginViewModel);
+            string token;
+
+            try
+            {
+                // Log user in and generate token
+                token = await _accountRepository.Login(loginViewModel);
+            }
+            catch (AccountException e)
+            {
+                ModelState.AddModelError(string.Empty, e.Message);
+                return View(loginViewModel);
+            }
+
 
             // Set token
             HttpContext.Session.SetString("Token", token);
@@ -49,9 +61,17 @@ namespace MeetingRooms.Controllers
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
             // Register user
-            var succes = await _accountRepository.Register(registerViewModel);
+            try
+            {
+                await _accountRepository.Register(registerViewModel);
+            }
+            catch (AccountException e)
+            {
+                ModelState.AddModelError("CompanyName", e.Message);
+                return View(registerViewModel);
+            }
             // If user is registered go to login else try again
-            return succes ? RedirectToAction(nameof(Login)) : View(registerViewModel);
+            return RedirectToAction(nameof(Login));
         }
 
         [HttpPost]
