@@ -9,7 +9,7 @@
 <h4>Meeting</h4>
 <hr />
 <div class="row">
-    @Html.ValidationSummary(false, string.Empty, new { @class = "text-danger" })
+    @Html.ValidationSummary(true, string.Empty, new { @class = "text-danger" })
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
