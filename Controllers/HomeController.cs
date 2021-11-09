@@ -12,9 +12,10 @@ namespace MeetingRooms.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(string errorMessage)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            errorMessage ??= "Something went wrong, please try again or contact your admin";
+            return View(new ErrorViewModel { ErrorMessage = errorMessage });
         }
     }
 }
