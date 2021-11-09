@@ -4,24 +4,24 @@ const meetingTimeHeader = document.getElementById('meeting-time');
 const attendingCompanyHeader = document.getElementById('attending-company');
 let meetings = [];
 
-window.setInterval(function () {
+window.setInterval(async function () {
     setTime();
-    getMeetings();
+    await getMeetings();
     checkMeetings();
     appendToUiList();
 }, 3000);
 
 function setTime() {
     const today = new Date();
-    const currentTime = `${today.getHours()}:${today.getMinutes()}`;
+    const currentTime = `${today.getHours()}:${today.getMinutes() < 10 ? '0' : ''}${today.getMinutes()}`;
     const timeSpan = document.getElementById('time');
     timeSpan.innerHTML = currentTime;
 }
 
-function getMeetings() {
-    fetch(`/Display/GetMeetings?meetingRoomId=${meetingRoomId}`)
-        .then(response => response.json())
-        .then(data => data.forEach(x => meetings.push(x)));
+async function getMeetings() {
+    const response = await fetch(`/Display/GetMeetings?meetingRoomId=${meetingRoomId}`);
+    const data = await response.json();
+    data.forEach(x => meetings.push(x));
 }
 
 function checkMeetings() {
@@ -46,7 +46,7 @@ function appendToUiList() {
     meetingsUiList.innerHTML = '';
     meetings.forEach(meeting => {
         let li = document.createElement('li');
-        li.appendChild(document.createTextNode(`${meeting.attendingCompany} ${meeting.startShortTimeString} - ${meeting.endShortTimeString}`));
+        li.appendChild(document.createTextNode(`${meeting.attendingCompany} ${meeting.startShortTimeString} - ${meeting.endShortTimeString} `));
         li.setAttribute('id', meeting.id);
         meetingsUiList.appendChild(li);
     });
@@ -54,14 +54,14 @@ function appendToUiList() {
 }
 
 function toggleBusyState(meeting) {
-    meetingTimeHeader.innerHTML = `${meeting.startShortTimeString} - ${meeting.endShortTimeString}`;
+    meetingTimeHeader.innerHTML = `${meeting.startShortTimeString} - ${meeting.endShortTimeString} `;
     attendingCompanyHeader.innerHTML = meeting.attendingCompany;
     document.body.style.backgroundColor = 'red';
     meetings.shift();
 }
 
 function toggleAlmostState(meeting) {
-    meetingTimeHeader.innerHTML = `${meeting.startShortTimeString} - ${meeting.endShortTimeString}`;
+    meetingTimeHeader.innerHTML = `${meeting.startShortTimeString} - ${meeting.endShortTimeString} `;
     attendingCompanyHeader.innerHTML = meeting.attendingCompany;
     document.body.style.backgroundColor = 'orange';
 }
