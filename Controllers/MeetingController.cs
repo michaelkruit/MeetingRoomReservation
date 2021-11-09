@@ -86,6 +86,7 @@ namespace MeetingRooms.Controllers
             catch (MeetingRoomException e)
             {
                 ModelState.AddModelError(string.Empty, e.Message);
+                createViewModel.MeetingRooms = await GetMeetingRooms();
                 return View(createViewModel);
             }
             catch (InvalidMeetingRoomOperationException e)
@@ -134,6 +135,7 @@ namespace MeetingRooms.Controllers
             catch (MeetingRoomException e)
             {
                 ModelState.AddModelError(string.Empty, e.Message);
+                updateViewModel.MeetingRooms = await GetMeetingRooms();
                 return View(updateViewModel);
             }
             catch (InvalidMeetingRoomOperationException e)
