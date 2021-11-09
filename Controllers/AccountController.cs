@@ -44,7 +44,6 @@ namespace MeetingRooms.Controllers
                 return View(loginViewModel);
             }
 
-
             // Set token
             HttpContext.Session.SetString("Token", token);
 

@@ -4,6 +4,7 @@ using MeetingRooms.Interfaces;
 using MeetingRooms.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,13 +37,20 @@ namespace MeetingRooms.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            // Get selected meeting
-            var meeting = await _meetingRepository.GetSingle(GetToken(), id);
+            try
+            {
+                // Get selected meeting
+                var meeting = await _meetingRepository.GetSingle(GetToken(), id);
 
-            // Map meeting to viewmodel
-            var viewModel = MapMeetingViewModel(meeting);
+                // Map meeting to viewmodel
+                var viewModel = MapMeetingViewModel(meeting);
 
-            return View(viewModel);
+                return View(viewModel);
+            }
+            catch (InvalidMeetingRoomOperationException e)
+            {
+                return RedirectToAction("Error", "Home", new { errorMessage = e.Message });
+            }
         }
 
         [HttpGet]
@@ -70,7 +78,6 @@ namespace MeetingRooms.Controllers
 
             try
             {
-
                 // Create new meeting
                 var meeting = await _meetingRepository.Create(GetToken(), createViewModel);
                 // Redirect to meeting details
@@ -81,18 +88,29 @@ namespace MeetingRooms.Controllers
                 ModelState.AddModelError(string.Empty, e.Message);
                 return View(createViewModel);
             }
+            catch (InvalidMeetingRoomOperationException e)
+            {
+                return RedirectToAction("Error", "Home", new { errorMessage = e.Message });
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> Update(int id)
         {
-            // Get selected meeting
-            var meeting = await _meetingRepository.GetSingle(GetToken(), id);
+            try
+            {
+                // Get selected meeting
+                var meeting = await _meetingRepository.GetSingle(GetToken(), id);
 
-            var updateViewModel = MapMeetingViewModel(meeting);
-            updateViewModel.MeetingRooms = await GetMeetingRooms();
+                var updateViewModel = MapMeetingViewModel(meeting);
+                updateViewModel.MeetingRooms = await GetMeetingRooms();
 
-            return View(updateViewModel);
+                return View(updateViewModel);
+            }
+            catch (InvalidMeetingRoomOperationException e)
+            {
+                return RedirectToAction("Error", "Home", new { errorMessage = e.Message });
+            }
         }
 
         [HttpPost]
@@ -118,27 +136,45 @@ namespace MeetingRooms.Controllers
                 ModelState.AddModelError(string.Empty, e.Message);
                 return View(updateViewModel);
             }
+            catch (InvalidMeetingRoomOperationException e)
+            {
+                return RedirectToAction("Error", "Home", new { errorMessage = e.Message });
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            // Get selected meeting
-            var meeting = await _meetingRepository.GetSingle(GetToken(), id);
+            try
+            {
+                // Get selected meeting
+                var meeting = await _meetingRepository.GetSingle(GetToken(), id);
 
-            // Map to viewmodel
-            var meetingViewModel = MapMeetingViewModel(meeting);
+                // Map to viewmodel
+                var meetingViewModel = MapMeetingViewModel(meeting);
 
-            return View(meetingViewModel);
+                return View(meetingViewModel);
+            }
+            catch (InvalidMeetingRoomOperationException e)
+            {
+                return RedirectToAction("Error", "Home", new { errorMessage = e.Message });
+            }
         }
 
         [HttpDelete("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            // Delete meeting
-            var deleted = await _meetingRepository.Delete(GetToken(), id);
-            // Redirect to index is success and redirect to Delete is failed
-            return deleted ? RedirectToAction(nameof(Index)) : RedirectToAction(nameof(Delete), new { id });
+            try
+            {
+                // Delete meeting
+                var deleted = await _meetingRepository.Delete(GetToken(), id);
+                // Redirect to index is success and redirect to Delete is failed
+                return deleted ? RedirectToAction(nameof(Index)) : RedirectToAction(nameof(Delete), new { id });
+            }
+            catch (Exception e) when (e.GetType() == typeof(InvalidMeetingRoomOperationException) || e.GetType() == typeof(MeetingRoomException))
+            {
+                return RedirectToAction("Error", "Home", new { errorMessage = e.Message });
+            }
         }
 
         // private helpers

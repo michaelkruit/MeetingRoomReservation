@@ -57,17 +57,32 @@ namespace MeetingRooms.Controllers
                 ModelState.AddModelError(string.Empty, e.Message);
                 return View(model);
             }
+            catch
+            {
+               return RedirectToAction("Error", "Home");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> Update(int id)
         {
-            // Get selected meeting room
-            var meetingRoom = await _meetingRoomRepository.GetSingle(id);
+            try
+            {
+                // Get selected meeting room
+                var meetingRoom = await _meetingRoomRepository.GetSingle(id);
 
-            var viewModel = MapToViewModel(meetingRoom);
+                var viewModel = MapToViewModel(meetingRoom);
 
-            return View(viewModel);
+                return View(viewModel);
+            }
+            catch (InvalidMeetingRoomOperationException e)
+            {
+                return RedirectToAction("Error", "Home", new { errorMessage = e.Message });
+            }
+            catch
+            {
+                return RedirectToAction("Error", "Home");
+            }
         }
 
         [HttpPost]
@@ -91,27 +106,45 @@ namespace MeetingRooms.Controllers
                 ModelState.AddModelError(string.Empty, e.Message);
                 return View(model);
             }
+            catch (InvalidMeetingRoomOperationException e)
+            {
+                return RedirectToAction("Error", "Home", new { errorMessage = e.Message });
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            // Get selected meeting room
-            var meetingRoom = await _meetingRoomRepository.GetSingle(id);
+            try
+            {
+                // Get selected meeting room
+                var meetingRoom = await _meetingRoomRepository.GetSingle(id);
 
-            // Create new meeting room viewmodel
-            var meetingRoomViewModel = MapToViewModel(meetingRoom);
+                // Create new meeting room viewmodel
+                var meetingRoomViewModel = MapToViewModel(meetingRoom);
 
-            return View(meetingRoomViewModel);
+                return View(meetingRoomViewModel);
+            }
+            catch (InvalidMeetingRoomOperationException e)
+            {
+                return RedirectToAction("Error", "Home", new { errorMessage = e.Message });
+            }
         }
 
         [HttpDelete("Delete")]
         public async Task<IActionResult> ConfirmDelete(int id)
         {
-            // Delete selected meeting room
-            await _meetingRoomRepository.Delete(GetToken(), id);
+            try
+            {
+                // Delete selected meeting room
+                await _meetingRoomRepository.Delete(GetToken(), id);
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidMeetingRoomOperationException e)
+            {
+                return RedirectToAction("Error", "Home", new { errorMessage = e.Message });
+            }
         }
 
         // Helper to get token from session
