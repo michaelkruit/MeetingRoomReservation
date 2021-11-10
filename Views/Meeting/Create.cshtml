@@ -36,6 +36,12 @@
                 <span asp-validation-for="MeetingRoomId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <button id="add-attendee-btn" type="button" class="btn btn-sm btn-primary">Add attendee</button>
+            </div>
+            <div id="attendees-container">
+
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
@@ -45,3 +51,6 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/addOrRemoveAttendees.js" asp-append-version="true"></script>
