@@ -1,0 +1,17 @@
+﻿@model IEnumerable<MeetingRoomViewModel>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-controller="display" asp-action="meetings" method="get">
+            <h1 class="h3 mb-3 fw-normal">Display meetings</h1>
+            <div class="form-floating">
+                <select class="form-control" name="meetingRoomId" asp-items="@(new SelectList(Model, "Id", "Name"))">
+                    <option value="@null">Please select the meeting room you want to display</option>
+                </select>
+                <label for="floatingInput">Meeting room</label>
+                <br />
+            </div>
+            <button class="w-100 btn btn-sm btn-primary" type="submit">Display</button>
+        </form>
+    </div>
+</div>

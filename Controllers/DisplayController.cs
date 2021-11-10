@@ -34,7 +34,7 @@ namespace MeetingRooms.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Meetings(int meetingRoomId = 1)
+        public async Task<IActionResult> Meetings(int meetingRoomId)
         {
             // Get meeting room
             var meetingRoom = await _meetingRoomRepository.GetSingle(meetingRoomId);
