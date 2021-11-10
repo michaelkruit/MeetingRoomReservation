@@ -73,7 +73,7 @@ namespace MeetingRooms.Controllers
             return RedirectToAction(nameof(Login));
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult Logout()
         {
             // Get token
