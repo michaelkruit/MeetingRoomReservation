@@ -26,7 +26,7 @@ async function getMeetings() {
 
 function checkMeetings() {
     if (meetings.length === 0) {
-        return;
+        toggleAvailableState();
     }
     const currentDate = new Date();
     const firstMeeting = meetings[0];
