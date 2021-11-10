@@ -19,6 +19,11 @@ namespace MeetingRooms.Controllers
         [HttpGet]
         public ActionResult Login()
         {
+            if(string.IsNullOrEmpty(GetToken()) == false)
+            {
+                return RedirectToAction("Index", "MeetingRoom");
+            }
+
             return View();
         }
 
@@ -53,6 +58,11 @@ namespace MeetingRooms.Controllers
         [HttpGet]
         public ActionResult Register()
         {
+            if (string.IsNullOrEmpty(GetToken()) == false)
+            {
+                return RedirectToAction("Index", "MeetingRoom");
+            }
+
             return View();
         }
 
@@ -85,5 +95,11 @@ namespace MeetingRooms.Controllers
 
             return RedirectToAction(nameof(Login));
         }
+
+        /// <summary>
+        /// Get token from session
+        /// </summary>
+        /// <returns></returns>
+        private string GetToken() => HttpContext.Session.GetString("Token");
     }
 }
