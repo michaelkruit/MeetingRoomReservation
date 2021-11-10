@@ -35,6 +35,23 @@
                 <span asp-validation-for="MeetingRoomId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <button id="add-attendee-btn" type="button" class="btn btn-sm btn-primary">Add attendee</button>
+            </div>
+            <div id="attendees-container">
+                @{
+                    if (Model.Attendees?.Any() == true)
+                    {
+                        foreach (var attendee in Model.Attendees)
+                        {
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="Attendees[]" value="@attendee" />
+                                <button type="button" class="btn btn-sm btn-danger" onclick="removeAttendee(this)">Remove</button>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
@@ -48,3 +65,4 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+<script src="~/js/addOrRemoveAttendees.js" asp-append-version="true"></script>

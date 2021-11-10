@@ -193,7 +193,9 @@ namespace MeetingRooms.Repositories
             }
 
             // Get meeting 
-            var meeting = await _dbContext.Meetings.FindAsync(updateModel.Id);
+            var meeting = await _dbContext.Meetings.Include(x => x.Attendees).SingleOrDefaultAsync(x => x.Id == updateModel.Id);
+
+            AddRemoveOrUpdateAttendees(meeting, updateModel);
 
             // Update allowed properties
             meeting.MeetingRoomId = updateModel.MeetingRoomId;
@@ -269,6 +271,45 @@ namespace MeetingRooms.Repositories
                 // Add all attendees that have a value to names object 
                 Names = string.Join(",", createModel.Attendees.Where(x => string.IsNullOrWhiteSpace(x) == false))
             };
+        }
+
+        /// <summary>
+        /// Add remove or update attendees of an existing meeting
+        /// </summary>
+        /// <param name="meeting"></param>
+        /// <param name="updateModel"></param>
+        private void AddRemoveOrUpdateAttendees(Meeting meeting, MeetingUpdateViewModel updateModel)
+        {
+            // Current meeting doesn't have Attenddees and the update model also doesn't contain any
+            if (meeting.Attendees == null && updateModel.Attendees?.Any() == false)
+            {
+                // don't do anything
+                return;
+            }
+            // Current meeting doesn't have Attendees and the update model contains a valid list of attendees
+            else if (meeting.Attendees == null && updateModel.Attendees?.All(x => string.IsNullOrWhiteSpace(x)) == false)
+            {
+                // Add new attendees
+                meeting.Attendees = new Attendees()
+                {
+                    MeetingId = meeting.Id,
+                    Names = string.Join(",", updateModel.Attendees.Where(x => string.IsNullOrWhiteSpace(x) == false))
+                };
+            }
+            // Current meeting does containt attendees, but the update model doesn't contain any
+            else if (meeting.Attendees != null && updateModel.Attendees == null)
+            {
+                // Remove attendees
+                _dbContext.Remove(meeting.Attendees);
+            }
+            // Current meeting does have attendees and updatemodel has attendees
+            else if (meeting.Attendees != null && updateModel.Attendees?.All(x => string.IsNullOrWhiteSpace(x)) == false)
+            {
+                // Update names
+                meeting.Attendees.Names = string.Join(",", updateModel.Attendees.Where(x => string.IsNullOrWhiteSpace(x) == false));
+            }
+            // Current meetings does have attendees but update model contains a list of emtpy string
+            return;
         }
     }
 }
