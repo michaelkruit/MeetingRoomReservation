@@ -127,6 +127,12 @@ namespace MeetingRooms.Repositories
                 EndDatetime = createModel.EndDateTime
             };
 
+            // Check if any attendees are given
+            if (createModel.Attendees?.Any() == true)
+            {
+                AddAttendees(newMeeting, createModel);
+            }
+
             // Add and save 
             await _dbContext.AddAsync(newMeeting);
             await _dbContext.SaveChangesAsync();
@@ -175,7 +181,7 @@ namespace MeetingRooms.Repositories
                 throw new InvalidMeetingRoomOperationException("No allowed to set selected meeting room");
             }
 
-            if(InCorrectDates(updateModel.StartDateTime, updateModel.EndDateTime))
+            if (InCorrectDates(updateModel.StartDateTime, updateModel.EndDateTime))
             {
                 throw new MeetingRoomException("End date must be greater then the start date");
             }
@@ -243,5 +249,26 @@ namespace MeetingRooms.Repositories
         /// <param name="end"></param>
         /// <returns></returns>
         private bool InCorrectDates(DateTime start, DateTime end) => start > end;
+
+        /// <summary>
+        /// Add attendees to new meeting
+        /// </summary>
+        /// <param name="newMeeting"></param>
+        /// <param name="createModel"></param>
+        private void AddAttendees(Meeting newMeeting, MeetingCreateViewModel createModel)
+        {
+            // If all attendees are null, emtpy or just whitespace, don't do anything
+            if (createModel.Attendees.All(x => string.IsNullOrWhiteSpace(x)))
+            {
+                return;
+            }
+
+            // Create new Attendees object
+            newMeeting.Attendees = new Attendees()
+            {
+                // Add all attendees that have a value to names object 
+                Names = string.Join(",", createModel.Attendees.Where(x => string.IsNullOrWhiteSpace(x) == false))
+            };
+        }
     }
 }
