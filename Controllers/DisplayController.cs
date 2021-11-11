@@ -1,4 +1,5 @@
 ﻿using MeetingRooms.Data.Entities;
+using MeetingRooms.Exceptions;
 using MeetingRooms.Interfaces;
 using MeetingRooms.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -36,8 +37,16 @@ namespace MeetingRooms.Controllers
         [HttpGet]
         public async Task<IActionResult> Meetings(int meetingRoomId)
         {
-            // Get meeting room
-            var meetingRoom = await _meetingRoomRepository.GetSingle(meetingRoomId);
+            MeetingRoom meetingRoom;
+            try
+            {
+                // Get meeting room
+                meetingRoom = await _meetingRoomRepository.GetSingle(meetingRoomId);
+            }
+            catch (InvalidMeetingRoomOperationException e)
+            {
+                return RedirectToAction("Error", "Home", new { errorMessage = e.Message });
+            }
 
             // Get meetings
             var meetings = await _meetingRepository.GetMeetingRoomList(GetToken(), meetingRoomId);

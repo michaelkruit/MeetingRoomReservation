@@ -2,6 +2,7 @@
 const meetingsUiList = document.getElementById('meetings');
 const meetingTimeHeader = document.getElementById('meeting-time');
 const attendingCompanyHeader = document.getElementById('attending-company');
+const attendoParagraph = document.getElementById('attendees');
 let meetings = [];
 
 window.setInterval(async function () {
@@ -56,6 +57,7 @@ function appendToUiList() {
 function toggleBusyState(meeting) {
     meetingTimeHeader.innerHTML = `${meeting.startShortTimeString} - ${meeting.endShortTimeString} `;
     attendingCompanyHeader.innerHTML = meeting.attendingCompany;
+    attendoParagraph.innerHTML = appendAttendees(meeting);
     document.body.style.backgroundColor = 'red';
     meetings.shift();
 }
@@ -64,12 +66,22 @@ function toggleAlmostState(meeting) {
     meetingTimeHeader.innerHTML = `${meeting.startShortTimeString} - ${meeting.endShortTimeString} `;
     attendingCompanyHeader.innerHTML = meeting.attendingCompany;
     document.body.style.backgroundColor = 'orange';
+    attendoParagraph.innerHTML = '';
 }
 
 function toggleAvailableState() {
     meetingTimeHeader.innerHTML = '';
     attendingCompanyHeader.innerHTML = '';
     document.body.style.backgroundColor = 'green';
+    attendoParagraph.innerHTML = '';
+}
+
+function appendAttendees(meeting) {
+    if (meeting.attendees.length > 0) {
+        const attendees = meeting.attendees.join(' ');
+        return attendees;
+    }
+    return;
 }
 
 function getDiffInMinutes(date1, date2) {
