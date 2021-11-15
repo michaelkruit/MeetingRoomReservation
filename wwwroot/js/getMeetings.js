@@ -58,21 +58,21 @@ function toggleBusyState(meeting) {
     meetingTimeHeader.innerHTML = `${meeting.startShortTimeString} - ${meeting.endShortTimeString} `;
     attendingCompanyHeader.innerHTML = meeting.attendingCompany;
     attendoParagraph.innerHTML = appendAttendees(meeting);
-    document.body.style.backgroundColor = 'red';
+    document.body.classList.add('busy').remove('available').remove('almost');
     meetings.shift();
 }
 
 function toggleAlmostState(meeting) {
     meetingTimeHeader.innerHTML = `${meeting.startShortTimeString} - ${meeting.endShortTimeString} `;
     attendingCompanyHeader.innerHTML = meeting.attendingCompany;
-    document.body.style.backgroundColor = 'orange';
+    document.body.classList.add('almost').remove('available').remove('busy');
     attendoParagraph.innerHTML = '';
 }
 
 function toggleAvailableState() {
     meetingTimeHeader.innerHTML = '';
     attendingCompanyHeader.innerHTML = '';
-    document.body.style.backgroundColor = 'green';
+    document.body.classList.add('available').remove('almost').remove('busy');
     attendoParagraph.innerHTML = '';
 }
 

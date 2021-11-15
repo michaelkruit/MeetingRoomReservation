@@ -1,6 +1,22 @@
 ﻿@model DisplayViewModel
 @{
     Layout = null;
+    string roomStatus = "available";
+    bool isAvailable = true;
+    MeetingViewModel firstMeeting = null;
+
+    if (Model.Meetings?.Any() == true && Model.Meetings.FirstOrDefault().StartDateTime <= DateTime.Now)
+    {
+        roomStatus = "busy";
+        isAvailable = false;
+        firstMeeting = Model.Meetings.First();
+    }
+    else if (Model.Meetings?.Any() == true && (DateTime.Now - Model.Meetings.FirstOrDefault().StartDateTime).TotalMinutes < 15)
+    {
+        roomStatus = "almost";
+        isAvailable = false;
+        firstMeeting = Model.Meetings.First();
+    }
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -9,19 +25,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title></title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/display.css" />
 </head>
-<body>
+<body class="@roomStatus">
     <div class="container pt-5">
         <input type="hidden" asp-for="MeetingRoomId" />
         <div class="row">
             <div class="col">
                 <h2>@Model.MeetingRoomName <span id="time">@DateTime.Now.ToShortTimeString()</span></h2>
                 <br />
-                <h3 id="meeting-time"></h3>
+                <h3 id="meeting-time">@(isAvailable ? string.Empty : $"{firstMeeting.StartShortTimeString} - {firstMeeting.EndShortTimeString}")</h3>
                 <br />
-                <h3 id="attending-company"></h3>
+                <h3 id="attending-company">@(isAvailable ? string.Empty : firstMeeting.AttendingCompany)</h3>
                 <br />
-                <p id="attendees"></p>
+                <p id="attendees">@((!isAvailable && firstMeeting.Attendees?.Any() == true) ? string.Join(" ", firstMeeting.Attendees) : string.Empty)</p>
             </div>
             <div class="col">
                 <h2>Upcoming meetings</h2>

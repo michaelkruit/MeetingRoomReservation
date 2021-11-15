@@ -1,0 +1,21 @@
+﻿body {
+    color: white;
+}
+
+.available {
+    background-color: green;
+}
+
+.almost {
+    background-color: orange;
+}
+
+.busy {
+    background-color: red;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
