@@ -11,7 +11,7 @@
         isAvailable = false;
         firstMeeting = Model.Meetings.First();
     }
-    else if (Model.Meetings?.Any() == true && (DateTime.Now - Model.Meetings.FirstOrDefault().StartDateTime).TotalMinutes < 15)
+    else if (Model.Meetings?.Any() == true && (Model.Meetings.FirstOrDefault().StartDateTime - DateTime.Now).TotalMinutes < 15)
     {
         roomStatus = "almost";
         isAvailable = false;

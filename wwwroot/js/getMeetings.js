@@ -97,7 +97,9 @@ function toggleBusyState(meeting) {
     // Set attendees in pargraph
     attendeesParagraph.innerHTML = appendAttendees(meeting);
     // Change class of body to busy and remove other classes
-    document.body.classList.add('busy').remove('available').remove('almost');
+    document.body.classList.add('busy');
+    document.body.classList.remove('available');
+    document.body.classList.remove('almost');
     // Remove meeting from meetings array
     meetings.shift();
 }
@@ -111,7 +113,9 @@ function toggleAlmostState(meeting) {
     // Set attendees in pargraph from coming meeting
     attendeesParagraph.innerHTML = appendAttendees(meeting);
     // Change class of body to almost and remove other classes
-    document.body.classList.add('almost').remove('available').remove('busy');
+    document.body.classList.add('almost');
+    document.body.classList.remove('available');
+    document.body.classList.remove('busy');
     // Remove meeting from meetings array
     meetings.shift();
 }
@@ -123,7 +127,9 @@ function toggleAvailableState() {
     // Clear attending company header
     attendingCompanyHeader.innerHTML = '';
     // Change class of body to available and remove other classes
-    document.body.classList.add('available').remove('almost').remove('busy');
+    document.body.classList.add('available');
+    document.body.classList.remove('almost');
+    document.body.classList.remove('busy');
     // Remove attendees from pargraph
     attendeesParagraph.innerHTML = '';
 }
