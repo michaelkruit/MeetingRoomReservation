@@ -9,3 +9,4 @@ select a meeting room and click 'Display' to see the current state
 of the meeting room (Available, almost reserved and reserved). The 
 upcoming meetings of the current day will also be displayed.
 
+### Github repository: https://github.com/michaelkruit/MeetingRoomReservation
