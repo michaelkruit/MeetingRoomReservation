@@ -1,4 +1,4 @@
-﻿    # Meeting room reservation
+    # Meeting room reservation
     ### Video demo: url
     ### Description: 
     With the meeting room reservation application it is possible to add 
