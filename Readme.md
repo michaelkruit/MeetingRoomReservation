@@ -120,3 +120,23 @@ Before sending information to the view for the user to see, entities are mapped 
 | ------------- | ------------- | ------------- |
 | Index | GET | Public | Get landing page view |
 | Error | GET | Public | Get genere error view |
+
+**MeetingController**
+
+| Method | Http Method | Public/Private  | Usage |
+| ------------- | ------------- | ------------- |
+| Index | GET | Public | Get meetings and show view with list of meetings |
+| Details | GET | Public | Get meeting and show details view |
+| Create | GET | Public | Get view to create a new meeting |
+| Create | POST | Public | Create a new meeting and redirect to meeting details |
+| Update | GET | Public | Get meeting and show view to update meeting |
+| Update | POST | Public | Post updated values for meeting and redirect to details |
+| Delete | GET | Public | Get meeting and show view to delete meeting |
+| DeleteConfirmed | POST | Public | Delete selected meeting and redirect to index |
+| GetToken | N/A | Private | Get JWT from session |
+| MapMeetingViewModel  | N/A | Private | Map meeting to viewmodel |
+| GetMeetingRooms  | N/A | Private | Get and map meeting rooms to viewmodels |
+
+
+
+
