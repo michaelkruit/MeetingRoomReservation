@@ -88,4 +88,35 @@ Some custom exceptions have been made for better exception handling. This way it
 **InvalidMeetingRoomOperationException** will be thrown when a user tries to execute actions with a meeting room they are not allowed to use.
 **MeetingRoomException** will be thrown when a user executes wrong meeting or meeting room actions.
 
+###### Controllers
+Controllers are the endpoints that are used to GET or POST data from and to the application. 
+Repositories are injected in them to communicate with the database. 
+Before sending information to the view for the user to see, entities are mapped to ViewModels
 
+**AccountController**
+
+| Method | Http Method | Public/Private  | Usage |
+| ------------- | ------------- | ------------- |
+| Login | GET | Public | Get the login view |
+| Login | POST | Public | Log a user in and redirect to the meeting room index |
+| Register | GET | Public | Get the register view |
+| Register | POST | Public | Register a new company and redirect to the login view |
+| Logout | GET | Public | Log a user out and redirect to the login page |
+| GetToken | N/A | Private | Get JWT from session |
+
+**DisplayController**
+
+| Method | Http Method | Public/Private  | Usage |
+| ------------- | ------------- | ------------- |
+| Index | GET | Public | Get view to select a meeting room to display |
+| Meetings | GET | Public | Get meetings for selected meeting room and return view where we show the upcoming meetings |
+| GetMeetings | GET | Public | Endpoint to get meetings for selected meeting room. This endpoint is used for an AJAX request |
+| MapMeetingsToViewModel | N/A | Private | Map Meeting entity to a ViewModel |
+| GetToken | N/A | Private | Get JWT from session |
+
+**HomeController**
+
+| Method | Http Method | Public/Private  | Usage |
+| ------------- | ------------- | ------------- |
+| Index | GET | Public | Get landing page view |
+| Error | GET | Public | Get genere error view |
