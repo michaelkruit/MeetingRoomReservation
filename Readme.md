@@ -40,6 +40,52 @@ Interfaces are used to define contracts for the classes that will implement the 
 | Method | Public/Private | Usage |
 | ------------- | ------------- | ------------- |
 | GetCompany  | Public | Get company registered with current token from memory cache |
-| IMeetingRepository  | Contract for Meeting related logic |
-| IMeetingRoomRepository  | Contract for Meeting Room related logic |
-| ITokenService  | Contract for Token related logic  |
+| Login  | Public | Check if the user and password exist in the database and are correct, if so add company to memoy cache |
+| Logout  | Public | Log user out (Remove from memory cache) |
+| Register | Public | Create a new company record in the database |
+| CompanyExist | Private | Check if given company name already exists in the database |
+
+**MeetingRepository**
+
+| Method | Public/Private | Usage |
+| ------------- | ------------- | ------------- |
+| GetCompanyList  | Public | Get list of meetings belonging to your company |
+| GetMeetingRoomList  | Public | Get list of meetings belonging to the selected meeting room |
+| GetSingle  | Public | Get selected meeting |
+| Create | Public | Create a new meeting record in the database |
+| Delete | Pubic | Delete selected meeting from database |
+| Update | Pubic | Update selected meeting |
+| IsAllowedMeetingRoom | Private | Check if the user is allowed to used the given meeting room |
+| IsOverLapping | Private | Check if a meeting overlaps with an existing meeting (One for create and one for update) |
+| InCorrectDates | Private | Check if meeting enddate is greater then the startdate |
+| AddAttendees | Private | Create an Attendee object with the list of given attendees |
+| AddRemoveOrUpdateAttendees | Private | Check if attendees need to be added or removed when updating a meeting |
+
+**MeetingRoomRepository**
+
+| Method | Public/Private | Usage |
+| ------------- | ------------- | ------------- |
+| GetList  | Public | Get list of meeting rooms belonging to your company |
+| GetSingle  | Public | Get selected meeting room |
+| Create | Public | Create a new meeting room record in the database |
+| Update | Pubic | Update selected meeting room |
+| Delete | Pubic | Delete selected meeting room from database |
+| MeetingRoomExist | Private | Check if meeting room already exist |
+
+##### Services
+**TokenService**
+
+| Method | Public/Private | Usage |
+| ------------- | ------------- | ------------- |
+| BuildToken  | Public | Build a simple valid JWT token |
+| ValidateToken  | Public | Validate if the given JWT token is valid |
+
+###### Exceptions
+
+Some custom exceptions have been made for better exception handling. This way it will be easier to show logical errors to the user.
+
+**AccountExceptions** will be thrown when a user executes invalid account actions.
+**InvalidMeetingRoomOperationException** will be thrown when a user tries to execute actions with a meeting room they are not allowed to use.
+**MeetingRoomException** will be thrown when a user executes wrong meeting or meeting room actions.
+
+
