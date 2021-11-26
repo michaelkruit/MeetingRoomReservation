@@ -96,7 +96,7 @@ Before sending information to the view for the user to see, entities are mapped 
 **AccountController**
 
 | Method | Http Method | Public/Private  | Usage |
-| ------------- | ------------- | ------------- |
+| ------------- | ------------- | ------------- | ------------- |
 | Login | GET | Public | Get the login view |
 | Login | POST | Public | Log a user in and redirect to the meeting room index |
 | Register | GET | Public | Get the register view |
@@ -107,7 +107,7 @@ Before sending information to the view for the user to see, entities are mapped 
 **DisplayController**
 
 | Method | Http Method | Public/Private  | Usage |
-| ------------- | ------------- | ------------- |
+| ------------- | ------------- | ------------- | ------------- |
 | Index | GET | Public | Get view to select a meeting room to display |
 | Meetings | GET | Public | Get meetings for selected meeting room and return view where we show the upcoming meetings |
 | GetMeetings | GET | Public | Endpoint to get meetings for selected meeting room. This endpoint is used for an AJAX request |
@@ -117,14 +117,14 @@ Before sending information to the view for the user to see, entities are mapped 
 **HomeController**
 
 | Method | Http Method | Public/Private  | Usage |
-| ------------- | ------------- | ------------- |
+| ------------- | ------------- | ------------- | ------------- |
 | Index | GET | Public | Get landing page view |
 | Error | GET | Public | Get genere error view |
 
 **MeetingController**
 
 | Method | Http Method | Public/Private  | Usage |
-| ------------- | ------------- | ------------- |
+| ------------- | ------------- | ------------- | ------------- |
 | Index | GET | Public | Get meetings and show view with list of meetings |
 | Details | GET | Public | Get meeting and show details view |
 | Create | GET | Public | Get view to create a new meeting |
