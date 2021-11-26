@@ -137,6 +137,18 @@ Before sending information to the view for the user to see, entities are mapped 
 | MapMeetingViewModel  | N/A | Private | Map meeting to viewmodel |
 | GetMeetingRooms  | N/A | Private | Get and map meeting rooms to viewmodels |
 
+**MeetingRoomController**
 
+| Method | Http Method | Public/Private  | Usage |
+| ------------- | ------------- | ------------- | ------------- |
+| Index | GET | Public | Get meeting rooms and show view with list of meeting rooms |
+| Create | GET | Public | Get view to create a new meeting room |
+| Create | POST | Public | Create a new meeting room and redirect to meeting room index |
+| Update | GET | Public | Get meeting room and show view to update meeting room |
+| Update | POST | Public | Post updated values for meeting room and redirect to index |
+| Delete | GET | Public | Get meeting room and show view to delete meeting room |
+| DeleteConfirmed | POST | Public | Delete selected meeting room and redirect to index |
+| GetToken | N/A | Private | Get JWT from session |
+| MapToViewModel  | N/A | Private | Map meeting room to viewmodel |
 
 
