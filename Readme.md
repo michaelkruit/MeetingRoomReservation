@@ -6,7 +6,7 @@
 
 #### Functional
 
-With the meeting room reservation application it is possible to add physical meeting rooms and reserve them. This will be possible with a simple to use interface. 
+With the meeting room reservation application, it is possible to add physical meeting rooms and reserve them. This will be possible with a simple to use interface. 
 It is also possible to show the state of a meeting room using a table, tv or other display device. 
 You can select a meeting room and click 'Display' to see the current state of the meeting room (Available, almost reserved and reserved). 
 The upcoming meetings of the current day will also be displayed.
@@ -15,33 +15,33 @@ The upcoming meetings of the current day will also be displayed.
 
 ##### Usages
 
-This MVC design pattern application is written in the laguage c# (C Sharp), using .NET 5 for runtime and Entity Framework framework for database communication. 
+This MVC design pattern application is written in the language c# (C Sharp), using .NET 5 for runtime and Entity Framework framework for database communication. 
 Sqlite is used for data storage, although other Sql could also be used if the product will go to production.
-For client side logic raw javascript is used and Bootstrap is used for UI related components
+For client-side logic raw JavaScript is used and Bootstrap is used for UI related components
 
 To be sure users are not able to access data directly from the database the repository patters is used. 
 This means that database related actions are done in a place a user cannot access. 
-This is done so the controllers won't have to much logic implemented and safety for data manipulation.
+This is done so the controllers will not have to much logic implemented and safety for data manipulation.
 
 ##### Files
 ###### Interfaces
 Interfaces are used to define contracts for the classes that will implement the logic. Implementation details will be explained when the respective classes are up. 
 
-| Interface name  | Usage |
+| Interface name | Usage |
 | ------------- | ------------- |
-| IAccountRepository  | Contract for account related logic  |
-| IMeetingRepository  | Contract for Meeting related logic |
-| IMeetingRoomRepository  | Contract for Meeting Room related logic |
-| ITokenService  | Contract for Token related logic  |
+| IAccountRepository | Contract for account related logic |
+| IMeetingRepository | Contract for Meeting related logic |
+| IMeetingRoomRepository | Contract for Meeting Room related logic |
+| ITokenService | Contract for Token related logic |
 
 ###### Repositories
 **AccountRepostiroy**
 
 | Method | Public/Private | Usage |
 | ------------- | ------------- | ------------- |
-| GetCompany  | Public | Get company registered with current token from memory cache |
-| Login  | Public | Check if the user and password exist in the database and are correct, if so add company to memoy cache |
-| Logout  | Public | Log user out (Remove from memory cache) |
+| GetCompany | Public | Get company registered with current token from memory cache |
+| Login | Public | Check if the user and password exist in the database and are correct, if so, add company to memory cache |
+| Logout | Public | Log user out (Remove from memory cache) |
 | Register | Public | Create a new company record in the database |
 | CompanyExist | Private | Check if given company name already exists in the database |
 
@@ -49,15 +49,15 @@ Interfaces are used to define contracts for the classes that will implement the 
 
 | Method | Public/Private | Usage |
 | ------------- | ------------- | ------------- |
-| GetCompanyList  | Public | Get list of meetings belonging to your company |
-| GetMeetingRoomList  | Public | Get list of meetings belonging to the selected meeting room |
-| GetSingle  | Public | Get selected meeting |
+| GetCompanyList | Public | Get list of meetings belonging to your company |
+| GetMeetingRoomList | Public | Get list of meetings belonging to the selected meeting room |
+| GetSingle | Public | Get selected meeting |
 | Create | Public | Create a new meeting record in the database |
 | Delete | Pubic | Delete selected meeting from database |
 | Update | Pubic | Update selected meeting |
-| IsAllowedMeetingRoom | Private | Check if the user is allowed to used the given meeting room |
+| IsAllowedMeetingRoom | Private | Check if the user is allowed to use the given meeting room |
 | IsOverLapping | Private | Check if a meeting overlaps with an existing meeting (One for create and one for update) |
-| InCorrectDates | Private | Check if meeting enddate is greater then the startdate |
+| InCorrectDates | Private | Check if meeting end date is greater than the start date |
 | AddAttendees | Private | Create an Attendee object with the list of given attendees |
 | AddRemoveOrUpdateAttendees | Private | Check if attendees need to be added or removed when updating a meeting |
 
@@ -65,8 +65,8 @@ Interfaces are used to define contracts for the classes that will implement the 
 
 | Method | Public/Private | Usage |
 | ------------- | ------------- | ------------- |
-| GetList  | Public | Get list of meeting rooms belonging to your company |
-| GetSingle  | Public | Get selected meeting room |
+| GetList | Public | Get list of meeting rooms belonging to your company |
+| GetSingle | Public | Get selected meeting room |
 | Create | Public | Create a new meeting room record in the database |
 | Update | Pubic | Update selected meeting room |
 | Delete | Pubic | Delete selected meeting room from database |
@@ -77,8 +77,8 @@ Interfaces are used to define contracts for the classes that will implement the 
 
 | Method | Public/Private | Usage |
 | ------------- | ------------- | ------------- |
-| BuildToken  | Public | Build a simple valid JWT token |
-| ValidateToken  | Public | Validate if the given JWT token is valid |
+| BuildToken | Public | Build a simple valid JWT token |
+| ValidateToken | Public | Validate if the given JWT token is valid |
 
 ###### Exceptions
 
@@ -95,7 +95,7 @@ Before sending information to the view for the user to see, entities are mapped 
 
 **AccountController**
 
-| Method | Http Method | Public/Private  | Usage |
+| Method | Http Method | Public/Private | Usage |
 | ------------- | ------------- | ------------- | ------------- |
 | Login | GET | Public | Get the login view |
 | Login | POST | Public | Log a user in and redirect to the meeting room index |
@@ -106,7 +106,7 @@ Before sending information to the view for the user to see, entities are mapped 
 
 **DisplayController**
 
-| Method | Http Method | Public/Private  | Usage |
+| Method | Http Method | Public/Private | Usage |
 | ------------- | ------------- | ------------- | ------------- |
 | Index | GET | Public | Get view to select a meeting room to display |
 | Meetings | GET | Public | Get meetings for selected meeting room and return view where we show the upcoming meetings |
@@ -116,14 +116,14 @@ Before sending information to the view for the user to see, entities are mapped 
 
 **HomeController**
 
-| Method | Http Method | Public/Private  | Usage |
+| Method | Http Method | Public/Private | Usage |
 | ------------- | ------------- | ------------- | ------------- |
 | Index | GET | Public | Get landing page view |
-| Error | GET | Public | Get genere error view |
+| Error | GET | Public | Get generic error view |
 
 **MeetingController**
 
-| Method | Http Method | Public/Private  | Usage |
+| Method | Http Method | Public/Private | Usage |
 | ------------- | ------------- | ------------- | ------------- |
 | Index | GET | Public | Get meetings and show view with list of meetings |
 | Details | GET | Public | Get meeting and show details view |
@@ -134,12 +134,12 @@ Before sending information to the view for the user to see, entities are mapped 
 | Delete | GET | Public | Get meeting and show view to delete meeting |
 | DeleteConfirmed | POST | Public | Delete selected meeting and redirect to index |
 | GetToken | N/A | Private | Get JWT from session |
-| MapMeetingViewModel  | N/A | Private | Map meeting to viewmodel |
-| GetMeetingRooms  | N/A | Private | Get and map meeting rooms to viewmodels |
+| MapMeetingViewModel | N/A | Private | Map meeting to viewmodel |
+| GetMeetingRooms | N/A | Private | Get and map meeting rooms to viewmodels |
 
 **MeetingRoomController**
 
-| Method | Http Method | Public/Private  | Usage |
+| Method | Http Method | Public/Private | Usage |
 | ------------- | ------------- | ------------- | ------------- |
 | Index | GET | Public | Get meeting rooms and show view with list of meeting rooms |
 | Create | GET | Public | Get view to create a new meeting room |
@@ -149,6 +149,23 @@ Before sending information to the view for the user to see, entities are mapped 
 | Delete | GET | Public | Get meeting room and show view to delete meeting room |
 | DeleteConfirmed | POST | Public | Delete selected meeting room and redirect to index |
 | GetToken | N/A | Private | Get JWT from session |
-| MapToViewModel  | N/A | Private | Map meeting room to viewmodel |
+| MapToViewModel | N/A | Private | Map meeting room to viewmodel |
+
+###### JavaScript
+
+**addOrRemoveAttendees.js** contains client-side logic to append new inputs to the DOM to add new attendees, it also contains the logic to remove the inputs from the DOM.
+
+**getMeetings.js** contains the logic that is used for the display meetings screen. It executes the following functions every 3 seconds:
+
+| Function | Async | Usage |
+| ------------- | ------------- | ------------- |
+| setTime | NO | Sets the current time in the DOM |
+| getMeetings | YES | Does a Get request to the server to retrieve the meetings of the current meeting room and adds these to a global usable array |
+| checkMeetings | NO | Checks it the global array contains any meetings, if so, toggle the state of the meeting room and display meeting information |
+| appendToUiList | NO | Appends the upcoming meetings to the DOM so the user can see what meetings will come |
+
+
+
+
 
 
